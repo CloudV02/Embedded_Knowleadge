@@ -116,7 +116,7 @@ Tiếp theo là quá trình Linking: Như ta thấy ở 3 chương trình ví d�
 </details>
 
 <details>
-<summary>## 2. Macro</summary>
+<summary> <h2> 2. Macro </h2> </summary>
 Là các chỉ thị tiền xử lý được xử lí trong quá trình Preprocessor gồm:
 - #include -> để thêm nội dung các file khác vào chương trình thường là các source .h
 **Ví dụ**
@@ -205,11 +205,11 @@ int array(number) = {__VA_ARGS__};
 </details>
 
 <details>
-<summary># BÀI POINTER:</summary>
+<summary> <h1>BÀI POINTER</h2></summary>
 
 ==============
 <details>
-<summary>## 1. Khái niệm về Pointer</summary> 
+<summary> <h2>1. Khái niệm về Pointer</h2></summary> 
 - Pointer là 1 biến chứa địa chỉ của 1 biến khác. Pointer có kích thước dựa vào kiến trúc máy tính và trình biên dịch.
 VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(pointer) = 8 byte, tương tự với kiến trúc 32bit sẽ là 4 byte
 ```C
@@ -230,7 +230,7 @@ VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(poin
 </details>
 
 <details>
-<summary>## 2. Các loại Pointer</summary>
+<summary><h2>2. Các loại Pointer</h2></summary>
 - **Void Pointer**: Dùng để trỏ tới 1 địa chỉ mà không cần biết kiểu dữ liệu của giá trị tại địa chỉ được trỏ tới. Nhưng muốn sử dụng giá trị trong địa chỉ đó thì phải ép kiểu về đúng kiểu dữ liệu của giá trị. Được sử dụng khi không xác định được kiểu dữ liệu được trỏ tới
 
 
@@ -324,12 +324,11 @@ Như ví dụ dưới đây khi ta khai báo 1 constant pointer và cho nó 1 đ
 </details>
 
 <details>
-<summary># BÀI CÁC BIẾN ĐẶC BIỆT</summary>
+<summary><h1>BÀI CÁC BIẾN ĐẶC BIỆT</h1></summary>
 
-====================
 
 <details>
-<summary>## 1. Extern</summary>
+<summary><h2>1. Extern</h2></summary>
 - Dùng extern để lấy 1 biến hoặc 1 hàm được khai báo global của nguồn file khác vào chương trình hiện tại của mình để sử dụng
 - Giúp cho chương trình có thể tách thành các phần nhỏ để dễ dàng quản lý
 
@@ -365,7 +364,7 @@ void cong(int a, int b){
 </details>
 
 <details>
-<summary>## 2. Static</summary>
+<summary><h2>2. Static</h2></summary>
 - **Static local**:
 + Sẽ được khai báo trong 1 hàm và sẽ được cấp phát địa chỉ cho biến đó. Thông thường nếu không sử dụng local static cho biến đó nó sẽ được lưu trong vùng stack và khi thoát khỏi hàm sẽ biến mất, còn nếu sử dụng local static nó sẽ tồn tại trong suốt time chạy chương trình và có 1 địa chỉ cụ thể ở vùng bss nhưng biêns local static chỉ được sử dụng trong hàm mà khai báo biến đó. Nếu muốn sử dụng biến đó bên ngoài hàm, phải cần 1 biến con trỏ global trỏ tới địa chỉ của local static
 
@@ -428,7 +427,7 @@ collect2.exe: error: ld returned 1 exit status
 </details>
 
 <details>
-<summary>## 3. Register</summary>
+<summary><h2>3. Register</h2></summary>
 - Từ khóa này để cho người lập trình muốn cho 1 biến thường xuyên sử dụng được lưu trữ trong thanh ghi để sử dụng thay vì biến đos được lưu vùng nhớ RAM -> việc này làm tăng tốc độ xử lý của biến đó
 Như ví dụ dưới đây nếu ta bỏ từ khóa register ở biến i chương trình sẽ chạy lâu hơn so với thêm register, dù thời gian không đáng kể đối với máy cấu hình mạnh như lap. Nhưng đối với vi điều khiển nó có tốc độ xử lý chậm, thì việc sử dụng từ khóa register hợp lí sẽ giảm thời gian chuyển đổi của biến từ RAM tới ALU bằng việc lưu tại Register của vi điều khiển.
 
@@ -472,7 +471,7 @@ Sau khi sử dụng từ khóa Register biến i: 0.0000000 giây
 </details>
 
 <details>
-<summary># BÀI GOTO SETJUMP</summary>
+<summary><h1>BÀI GOTO SETJUMP</h1></summary>
 
 ## 1. Goto
 - Goto cho phép chương trình nhảy từ lệnh goto đến 1 label đã được đặt trước trong cùng 1 hàm.
@@ -542,7 +541,7 @@ int main(){
 </details>
 
 <details>
-<summary># BÀI BIT MASK</summary>
+<summary><h1>BÀI BIT MASK</h1></summary>
 
 Bitmask là 1 kỹ thuật trong lập trình sử dụng các phép toán bit như AND OR XOR NOT SHIFT để thực hiện các trạng thái như thiết lập, hoặc xóa hoặc kiểm tra các bit cụ thể trong 1 Byte
 
@@ -621,7 +620,7 @@ int main(){
 </details>
 
 <details>
-<summary># BÀI STRUCT UNION</summary>
+<summary><h1>BÀI STRUCT UNION</h1></summary>
 ## 1. STRUCT
 - Struct là 1 kiểu cấu trúc dữ liệu do người lập trình tự định nghĩa bằng cách nhóm các biến có kiểu dữ liệu khác nhau lại với nhau. Việc có kiểu struct giúp tạo ra 1 thực thể dữ liệu lớn hơn và được tổ chức chặt chẽ.
 - Mỗi biến trong struct gọi là 1 thành viên hoặc trường
@@ -806,7 +805,7 @@ int main(){
 </details>
 
 <details>
-<summary># JSON AND LINKED LIST</summary>
+<summary><h1>JSON AND LINKED LIST</h1></summary>
 
 ## JSON
 - Khái niệm: JSON (JavaScript Object Notation - ghi chú về hướng đối tượng JavaScript) đây là 1 kiểu định dạng dữ liệu tuân theo 1 quy tắc nhất định mà hầu hết các ngôn ngữ đều có thể đoc được. JSON là 1 tiêu chuẩn mở để trao đổi dữ liệu giữa máy tính với web, cũng như giữa các hệ thống khác nhau.

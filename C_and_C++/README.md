@@ -1,10 +1,10 @@
 <details>
-<summary># COMPILER AND MACRO<summary>
+<summary># COMPILER AND MACRO</summary>
 
 ==============
 
 <details>
-<summary>## 1. Compiler<summary>
+<summary>## 1. Compiler</summary>
 
 là quá trình biên dịch từ mã người dùng sang mã máy. Nó sẽ bao gồm các bước Preprocessor, Compilation, Assembler, Linking
 - Quá trình Preprocessor: Là quá trình tiền xử lý sẽ gộp các file source với file thư viện tương ứng (file.c và file.h), và xử lý các chỉ thị tiền xử lý như macro và xóa các command line
@@ -118,7 +118,7 @@ Tiếp theo là quá trình Linking: Như ta thấy ở 3 chương trình ví d�
 </details>
 
 <details>
-<summary>## 2. Macro<summary>
+<summary>## 2. Macro</summary>
 Là các chỉ thị tiền xử lý được xử lí trong quá trình Preprocessor gồm:
 - #include -> để thêm nội dung các file khác vào chương trình thường là các source .h
 **Ví dụ**
@@ -207,11 +207,11 @@ int array(number) = {__VA_ARGS__};
 </details>
 
 <details>
-<summary># BÀI POINTER:<summary>
+<summary># BÀI POINTER:</summary>
 
 ==============
 <details>
-<summary>## 1. Khái niệm về Pointer<summary> 
+<summary>## 1. Khái niệm về Pointer</summary> 
 - Pointer là 1 biến chứa địa chỉ của 1 biến khác. Pointer có kích thước dựa vào kiến trúc máy tính và trình biên dịch.
 VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(pointer) = 8 byte, tương tự với kiến trúc 32bit sẽ là 4 byte
 ```C
@@ -232,7 +232,7 @@ VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(poin
 </details>
 
 <details>
-<summary>## 2. Các loại Pointer<summary>
+<summary>## 2. Các loại Pointer</summary>
 - **Void Pointer**: Dùng để trỏ tới 1 địa chỉ mà không cần biết kiểu dữ liệu của giá trị tại địa chỉ được trỏ tới. Nhưng muốn sử dụng giá trị trong địa chỉ đó thì phải ép kiểu về đúng kiểu dữ liệu của giá trị. Được sử dụng khi không xác định được kiểu dữ liệu được trỏ tới
 
 
@@ -326,12 +326,12 @@ Như ví dụ dưới đây khi ta khai báo 1 constant pointer và cho nó 1 đ
 </details>
 
 <details>
-<summary># BÀI CÁC BIẾN ĐẶC BIỆT<summary>
+<summary># BÀI CÁC BIẾN ĐẶC BIỆT</summary>
 
 ====================
 
 <details>
-<summary>## 1. Extern<summary>
+<summary>## 1. Extern</summary>
 - Dùng extern để lấy 1 biến hoặc 1 hàm được khai báo global của nguồn file khác vào chương trình hiện tại của mình để sử dụng
 - Giúp cho chương trình có thể tách thành các phần nhỏ để dễ dàng quản lý
 
@@ -367,7 +367,7 @@ void cong(int a, int b){
 </details>
 
 <details>
-## 2. Static
+<summary>## 2. Static</summary>
 - **Static local**:
 + Sẽ được khai báo trong 1 hàm và sẽ được cấp phát địa chỉ cho biến đó. Thông thường nếu không sử dụng local static cho biến đó nó sẽ được lưu trong vùng stack và khi thoát khỏi hàm sẽ biến mất, còn nếu sử dụng local static nó sẽ tồn tại trong suốt time chạy chương trình và có 1 địa chỉ cụ thể ở vùng bss nhưng biêns local static chỉ được sử dụng trong hàm mà khai báo biến đó. Nếu muốn sử dụng biến đó bên ngoài hàm, phải cần 1 biến con trỏ global trỏ tới địa chỉ của local static
 
@@ -427,8 +427,10 @@ void cong(int a, int b){
 C:\Users\ASUS\AppData\Local\Temp\ccugdRGH.o:program_1.c:(.text+0xf): undefined reference to `a'
 collect2.exe: error: ld returned 1 exit status
 ```
+</details>
 
-## 3. Register
+<details>
+<summary>## 3. Register</summary>
 - Từ khóa này để cho người lập trình muốn cho 1 biến thường xuyên sử dụng được lưu trữ trong thanh ghi để sử dụng thay vì biến đos được lưu vùng nhớ RAM -> việc này làm tăng tốc độ xử lý của biến đó
 Như ví dụ dưới đây nếu ta bỏ từ khóa register ở biến i chương trình sẽ chạy lâu hơn so với thêm register, dù thời gian không đáng kể đối với máy cấu hình mạnh như lap. Nhưng đối với vi điều khiển nó có tốc độ xử lý chậm, thì việc sử dụng từ khóa register hợp lí sẽ giảm thời gian chuyển đổi của biến từ RAM tới ALU bằng việc lưu tại Register của vi điều khiển.
 
@@ -468,9 +470,11 @@ Sau khi sử dụng từ khóa Register biến i: 0.0000000 giây
 ## 4. Volatile
 - Từ khóa này để cho trình biên dịch của chương trình luôn chạy dòng code đó vì nhiều trình biên dịch sẽ tối ưu hóa đoạn code là chỉ chạy 1 lần -> dẫn tới sai sót trong hệ thống nhúng, vì hệ thống nhúng có những exception nên khi quay về chương trình chính sẽ tiếp tục -> có thể gây sai sót. Khi dùng volatile giúp trình biên dịch hiểu là phải chạy dòng code đó lại.
 
-# BÀI GOTO SETJUMP
+</details>
+</details>
 
-================
+<details>
+<summary># BÀI GOTO SETJUMP</summary>
 
 ## 1. Goto
 - Goto cho phép chương trình nhảy từ lệnh goto đến 1 label đã được đặt trước trong cùng 1 hàm.
@@ -537,8 +541,11 @@ int main(){
     }
 }
 ```
+</details>
 
-# BÀI BIT MASK
+<details>
+<summary># BÀI BIT MASK</summary>
+
 Bitmask là 1 kỹ thuật trong lập trình sử dụng các phép toán bit như AND OR XOR NOT SHIFT để thực hiện các trạng thái như thiết lập, hoặc xóa hoặc kiểm tra các bit cụ thể trong 1 Byte
 
 ## Toán tử bitwise
@@ -612,7 +619,11 @@ int main(){
 244
 25
 ```
-# BÀI STRUCT UNION
+
+</details>
+
+<details>
+<summary># BÀI STRUCT UNION</summary>
 ## 1. STRUCT
 - Struct là 1 kiểu cấu trúc dữ liệu do người lập trình tự định nghĩa bằng cách nhóm các biến có kiểu dữ liệu khác nhau lại với nhau. Việc có kiểu struct giúp tạo ra 1 thực thể dữ liệu lớn hơn và được tổ chức chặt chẽ.
 - Mỗi biến trong struct gọi là 1 thành viên hoặc trường
@@ -682,8 +693,10 @@ int main(){
     Data.var2 = 4668481
     Data.var3 = 15425
 ```
+</details>
 
-# BÀI MEMORY LAYOUT
+<details>
+<summary># BÀI MEMORY LAYOUT</summary>
 
 Các file sau quá trình build processing sẽ tạo ra các file thực thi như file.exe trên window hoặc như file.hex trên vi điều khiển để lưu vào bộ nhớ như SSD hoặc Flash. Sau đó khi chạy chương trình nó sẽ được copy lên bộ nhớ RAM để thực thi. Từ đó nó sẽ sinh ra các phân vùng nhớ để lưu trữ các dữ liệu lần lượt bao gồm Text segment, data segment, bss segment, heap segment, stack segment.
 
@@ -792,7 +805,10 @@ int main(){
 - Vùng nhớ này là vùng để cấp phát bộ nhớ động trong quá trình chạy chương trình, đây là vùng nhớ cho phép người lập trình tạo ra và giải phóng bộ nhớ theo ý mình muốn. Điều này sẽ giúp cho cta thay đổi tùy ý dựa vào dữ liệu trong quá trình chạy
 - Có quyền đọc ghi như bình thường trong quá trình chạy. Ở trong C sử dụng các hàm malloc, calloc, realloc, free để tác động vào vùng nhớ HEAP.
 
-# JSON AND LINKED LIST
+</details>
+
+<details>
+<summary># JSON AND LINKED LIST</summary>
 
 ## JSON
 - Khái niệm: JSON (JavaScript Object Notation - ghi chú về hướng đối tượng JavaScript) đây là 1 kiểu định dạng dữ liệu tuân theo 1 quy tắc nhất định mà hầu hết các ngôn ngữ đều có thể đoc được. JSON là 1 tiêu chuẩn mở để trao đổi dữ liệu giữa máy tính với web, cũng như giữa các hệ thống khác nhau.
@@ -805,6 +821,7 @@ int main(){
     "friend" : "[hoa, mai]",
 }
 ```
+
 ## LINKED LIST
 - Là 1 cấu trúc dữ liệu được sử dụng để tổ chức và lưu trữ dữ liệu. Một linked list bao gồm 1 chuỗi các node. Các node này sẽ lưu trữ dữ liệu và 1 biến con trỏ, trỏ tới địa chỉ tiếp theo (đối với Singlely Linked List), hoặc thêm 1 biến trỏ tới địa chỉ trước đó (đối với Doubly Linked List). Linked list sẽ cung cấp linh hoạt việc thêm, chèn, xóa các phần tử ra khỏi linked list mà không cần phải dichj chuyển toàn bộ các phần tử như trong mảng.
 Dưới đây ta sẽ khai báo 1 node cho linked list:
@@ -815,6 +832,9 @@ Dưới đây ta sẽ khai báo 1 node cho linked list:
         Node *next;
     }Node; 
 ```
+
+</details>
+
 # STACK AND QUEUE
 
 # CLASS

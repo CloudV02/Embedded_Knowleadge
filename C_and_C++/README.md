@@ -1,10 +1,8 @@
 <details>
-<summary> # COMPILER AND MACRO</summary>
-
-==============
+<summary> <h1>COMPILER AND MACRO </h1> </summary>
 
 <details>
-<summary> ## 1. Compiler</summary>
+<summary> <h2> 1. Compiler </h2> </summary>
 
 là quá trình biên dịch từ mã người dùng sang mã máy. Nó sẽ bao gồm các bước Preprocessor, Compilation, Assembler, Linking
 - Quá trình Preprocessor: Là quá trình tiền xử lý sẽ gộp các file source với file thư viện tương ứng (file.c và file.h), và xử lý các chỉ thị tiền xử lý như macro và xóa các command line

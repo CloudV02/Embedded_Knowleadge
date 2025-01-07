@@ -365,7 +365,8 @@ void cong(int a, int b){
 
 <details>
 <summary><h2>2. Static</h2></summary>
-- **Static local**:
+
+**Static local**
 + Sẽ được khai báo trong 1 hàm và sẽ được cấp phát địa chỉ cho biến đó. Thông thường nếu không sử dụng local static cho biến đó nó sẽ được lưu trong vùng stack và khi thoát khỏi hàm sẽ biến mất, còn nếu sử dụng local static nó sẽ tồn tại trong suốt time chạy chương trình và có 1 địa chỉ cụ thể ở vùng bss nhưng biêns local static chỉ được sử dụng trong hàm mà khai báo biến đó. Nếu muốn sử dụng biến đó bên ngoài hàm, phải cần 1 biến con trỏ global trỏ tới địa chỉ của local static
 
 **Chương trình**
@@ -621,6 +622,7 @@ int main(){
 
 <details>
 <summary><h1>BÀI STRUCT UNION</h1></summary>
+
 ## 1. STRUCT
 - Struct là 1 kiểu cấu trúc dữ liệu do người lập trình tự định nghĩa bằng cách nhóm các biến có kiểu dữ liệu khác nhau lại với nhau. Việc có kiểu struct giúp tạo ra 1 thực thể dữ liệu lớn hơn và được tổ chức chặt chẽ.
 - Mỗi biến trong struct gọi là 1 thành viên hoặc trường
@@ -653,7 +655,7 @@ int main(){
 }
 ```
 **Kết quả**
-```
+```C
     40
 ```
 
@@ -693,7 +695,7 @@ int main(){
 </details>
 
 <details>
-<summary># BÀI MEMORY LAYOUT</summary>
+<summary><h1>BÀI MEMORY LAYOUT</h1></summary>
 
 Các file sau quá trình build processing sẽ tạo ra các file thực thi như file.exe trên window hoặc như file.hex trên vi điều khiển để lưu vào bộ nhớ như SSD hoặc Flash. Sau đó khi chạy chương trình nó sẽ được copy lên bộ nhớ RAM để thực thi. Từ đó nó sẽ sinh ra các phân vùng nhớ để lưu trữ các dữ liệu lần lượt bao gồm Text segment, data segment, bss segment, heap segment, stack segment.
 

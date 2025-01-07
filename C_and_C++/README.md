@@ -1,10 +1,10 @@
-
-# COMPILER AND MACRO
+<details>
+<summary># COMPILER AND MACRO<summary>
 
 ==============
 
 <details>
-<summary>## 1. Compiler <summary>
+<summary>## 1. Compiler<summary>
 
 là quá trình biên dịch từ mã người dùng sang mã máy. Nó sẽ bao gồm các bước Preprocessor, Compilation, Assembler, Linking
 - Quá trình Preprocessor: Là quá trình tiền xử lý sẽ gộp các file source với file thư viện tương ứng (file.c và file.h), và xử lý các chỉ thị tiền xử lý như macro và xóa các command line
@@ -115,9 +115,10 @@ Tiếp theo là quá trình Linking: Như ta thấy ở 3 chương trình ví d�
 ```
 11
 ```
-<details>
+</details>
 
-## 2. Macro
+<details>
+<summary>## 2. Macro<summary>
 Là các chỉ thị tiền xử lý được xử lí trong quá trình Preprocessor gồm:
 - #include -> để thêm nội dung các file khác vào chương trình thường là các source .h
 **Ví dụ**
@@ -202,13 +203,15 @@ double double_##name
 #define ARRAY(number,...) \
 int array(number) = {__VA_ARGS__};
 ```
+</details>
+</details>
 
-
-# BÀI POINTER:
+<details>
+<summary># BÀI POINTER:<summary>
 
 ==============
-
-## 1. Khái niệm về Pointer 
+<details>
+<summary>## 1. Khái niệm về Pointer<summary> 
 - Pointer là 1 biến chứa địa chỉ của 1 biến khác. Pointer có kích thước dựa vào kiến trúc máy tính và trình biên dịch.
 VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(pointer) = 8 byte, tương tự với kiến trúc 32bit sẽ là 4 byte
 ```C
@@ -226,8 +229,10 @@ VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(poin
     size of interger: 4
 ```
 - Kiểu dữ liệu khai báo biến pointer sẽ là kiểu dữ liệu của giá trị tại địa chỉ đang được trỏ tới.
+</details>
 
-## 2. Các loại Pointer
+<details>
+<summary>## 2. Các loại Pointer<summary>
 - **Void Pointer**: Dùng để trỏ tới 1 địa chỉ mà không cần biết kiểu dữ liệu của giá trị tại địa chỉ được trỏ tới. Nhưng muốn sử dụng giá trị trong địa chỉ đó thì phải ép kiểu về đúng kiểu dữ liệu của giá trị. Được sử dụng khi không xác định được kiểu dữ liệu được trỏ tới
 
 
@@ -317,12 +322,16 @@ Như ví dụ dưới đây khi ta khai báo 1 constant pointer và cho nó 1 đ
 	int *const const_ptr = &cons_val;
 	//const_ptr = &test_val; khong the tro toi dia chi khac
 ```
+</details>
+</details>
 
-# BÀI CÁC BIẾN ĐẶC BIỆT
+<details>
+<summary># BÀI CÁC BIẾN ĐẶC BIỆT<summary>
 
 ====================
 
-## 1. Extern
+<details>
+<summary>## 1. Extern<summary>
 - Dùng extern để lấy 1 biến hoặc 1 hàm được khai báo global của nguồn file khác vào chương trình hiện tại của mình để sử dụng
 - Giúp cho chương trình có thể tách thành các phần nhỏ để dễ dàng quản lý
 
@@ -355,7 +364,9 @@ void cong(int a, int b){
 	10
 	11
 ```
+</details>
 
+<details>
 ## 2. Static
 - **Static local**:
 + Sẽ được khai báo trong 1 hàm và sẽ được cấp phát địa chỉ cho biến đó. Thông thường nếu không sử dụng local static cho biến đó nó sẽ được lưu trong vùng stack và khi thoát khỏi hàm sẽ biến mất, còn nếu sử dụng local static nó sẽ tồn tại trong suốt time chạy chương trình và có 1 địa chỉ cụ thể ở vùng bss nhưng biêns local static chỉ được sử dụng trong hàm mà khai báo biến đó. Nếu muốn sử dụng biến đó bên ngoài hàm, phải cần 1 biến con trỏ global trỏ tới địa chỉ của local static

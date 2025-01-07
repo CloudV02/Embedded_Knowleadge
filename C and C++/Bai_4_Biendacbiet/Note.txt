@@ -1,3 +1,0 @@
-- extern
-
-Tại sao không dùng include mà dùng extern

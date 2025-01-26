@@ -1,4 +1,4 @@
-<details>
+    <details>
 <summary> <h1>COMPILER AND MACRO </h1> </summary>
 
 <details>
@@ -231,6 +231,7 @@ VD: Với kiến trúc trên máy tính laptop 64bit thì size của sizeof(poin
 
 <details>
 <summary><h2>2. Các loại Pointer</h2></summary>
+
 - **Void Pointer**: Dùng để trỏ tới 1 địa chỉ mà không cần biết kiểu dữ liệu của giá trị tại địa chỉ được trỏ tới. Nhưng muốn sử dụng giá trị trong địa chỉ đó thì phải ép kiểu về đúng kiểu dữ liệu của giá trị. Được sử dụng khi không xác định được kiểu dữ liệu được trỏ tới
 
 
@@ -834,6 +835,284 @@ Dưới đây ta sẽ khai báo 1 node cho linked list:
 
 </details>
 
-# STACK AND QUEUE
+<details>
 
-# CLASS
+<summary><h1> STACK AND QUEUE </h1></summary>
+- Stack là 1 cấu trúc dữ liệu tuân thủ nguyên tắc vào trước ra sau (LIFO) tức là phần tử cuối cùng được thêm vào sẽ là phần tử đầu tiên được lấy ra
++ Các thao tác cơ bản trên stack: push(thêm phần tử vào đỉnh stack), pop (để xóa 1 phần tử ở đỉnh stack), top (lấy giá trị của đỉnh stack)
+- Queue là 1 cấu trúc dữ liệu tuân thủ nguyên tắc vào trước ra trước (FIFO) nghĩa là phần tử thêm vào hàng đợi trước sẽ là phần tử đầu tiên được lấy ra
++ Các thao tác cơ bản trên hàng đợi bao gồm: enqueue(thêm phần tử vào cuối hàng đợi), dequeue(lấy phần tử từ đầu hàng đợi), front(để lấy giá trị của phần tử đứng đầu hàng đợi), rear(để lấy giá trị của phần tử đứng cuối hàng đợiđợi)
+
+</details>
+
+<details>
+<summary> <h1>CLASS</h1> </summary>
+- struct chỉ có member là biến thoi, class member có thể là hàm, có thể là biến, mảng -> class bản chất là 1 file.
+- trong 1 class có phạm vi truy cập public, protected, privated.
+- tên gọi các member trong class sẽ khác: biến gọi là property, các hàm gọi là method, biến có kiểu dữ liệu là class thì gọi là object.
+- Như dưới code dòng không thể khai báo cũng như định nghĩa int SinhVien::test2 = 20 vì biến test2 kia chưa có địa chỉ nên việc gắn vậy compiler sẽ không hiểu để
+muốn gắn như ậy phải khởi tạo 1 object (nghĩa là đã khởi tạo 1 địa chỉ).
+- Static trong C++: 
++ Với static trong thông thường nó sẽ được khai báo như biến bình thường static int count thì nó sẽ được cấp 1 địa chỉ cố định và tùy thuộc vào
+việc biến đó là global hay local thì phạm vi hoạt động nó sẽ khác.
++ Với biến static: Còn với static trong class khi khai báo ở trong class nó vẫn chưa được coi là khai báo nên vẫn chưa được cấp địa chỉ trong bộ nhớ, muốn để nó cấp
+địa chỉ cho biến static ta phải khai báo bên ngoài class và được khai báo bên ngoài hàm main vd: int SinhVien::Test = 10; như vậy ta đã cấp được vùng nhớ cho biến 
+static và biến static tất cả các object của class sẽ dùng chung địa chỉ với nó. Các hàm trong class thì đều có thể sử dụng biến static.
++ Với hàm static: Điểm đầu tiên 1 function static khác với 1 biến static là nó độc lập với bất kì object nào trong class tức là không cần có object nó cũm có thể
+gọi được dữ liệu ra nên không cần 1 object nào thì static function cũm được gọi ra. Ngoài ra nó có phạm vi bên trong lớp và không thể trỏ bởi object. Và đối với hàm
+static thì chỉ sử dụng các biến static và hàm static bên trong hàm.
+
+- Các quyền truy cập trong class:
++ public: cho phép object lẫn class con truy cập tới
++ protected: cho phép class truy cập, không cho phép object truy cập
++ private: không cho phép class con, lẫn object truy cập.
+** Code class **
+```C
+#include <iostream>
+#include <string>
+using namespace std;
+
+/* ban chat la 1 kieu du lieu */
+/* co pham vi truy cap*/
+class SinhVien{
+    /* member co the la ham, bien, mang .., class ban chat giong nhu 1 file co ham co mang, co the dinh nghia cac kieu du lieu */
+    public:
+        SinhVien(string ten, string lop);         // constructor
+        void display();     // method - phương thức
+        static int Test;
+    /* nhung member nam trong private thi object khong dung toi dc, no chi co gia tri tai class */
+        int test2;
+    private:
+        int ID ;             // property - thuộc tính
+        string TEN;
+        string LOP;
+};
+
+int SinhVien::Test = 10;
+int SinhVien::test2 = 20;
+
+void SinhVien::display(){     // method
+            cout<<"MSV: "<<ID<<endl;
+            cout<<"TEN: "<<TEN<<endl;
+            cout<<"LOP: "<<LOP<<endl;
+}
+
+SinhVien::SinhVien(string ten, string lop){
+    ID = 100;
+    TEN = ten;
+    LOP = lop;
+}
+int main()
+{
+    /* string la 1 kieu du lieu thao tac voi chuoi */
+
+    //SinhVien sv; // class - object
+
+    SinhVien sv("Lam","KTMT"), sv1("Dung","VHTT");
+    sv.display();
+
+    printf("%d\n",&sv.Test);
+    printf("%d\n",&sv1.Test);
+}
+
+/* static trong class  */
+```
+
+</details>
+
+<details>
+<summary><h1> OOP & Virtual </h1></summary>
+Trong hướng đối tượng có 4 tính chất tính kế thừa, tính trừu tượng, tính đa hình và tính đóng gói
+
+- **Tính kế thừa(Inheritance):**
++ Về cơ bản tính kế thừa tức là việc sử dụng lại các property và method của 1 class lấy từ 1 class khác. Còn được gọi là class con và class cha
++ Và các class con chỉ được kế thừa các property và method có quyền truy cập là public và protected của class cha.
++ Và có 3 kiểu kế thừa public, protected và private. Các property và method được kế thừa từ class cha sẽ nằm ở quyền truy cập của class con tương ứng với kiểu kế thừa
+Không thể kế thừa conductor.
++ 1 số kiến thức khác : overide(định nghĩa lại) tức là class sẽ ghi đè method của class cha.
++ Class con cũm không thể kế thừa constructor của class cha (nếu vẫn thưcj hiện thì bị lỗi compiler).
+- Class cha có 3 phạm vi truy cập (public, private, protected)
++ Thì class con với kiểu kế thừa public thì các member với phạm vi truy cập ở class cha là public 
+thì qua class con vẫn là public, nếu member ở class cha có phạm vi truy cập protected thì sang class con nó sẽ là protected.
++ Đối với class con với kiểu kế thừa protected: thì những thằng public và protected từ class cha sang class con sẽ sang protected hết
++ Đối với class con với kiểu kế thừa private: cũm tương tự protected thì các member từ class cha sang class đều nằm trong phạm vi truy cập private.
+**Ví dụ tính kế thừa**
+```C
+    #include <iostream>
+    #include <string>   
+    using namespce std;
+
+    class DoiTuong{
+        private:
+            int ID;
+            string TEN;
+        public:
+            void display();
+    }
+
+    DoiTuong::DoiTuong(string ten){
+        static int id = 100;
+        ID = id;
+        id++;
+        TEN = ten;
+    }
+
+    class SinhVien :: public DoiTuong{
+        
+    };
+    int main(){
+
+    }
+```
+- **Virtual Inheritance:**
++ Việc sử dụng con trỏ đối với tính kế thừa cũng có sự khác biệt là ta có thể sử dụng con trỏ object của class cha để lấy địa chỉ object của class con còn class con
+không lấy được địa chỉ của object class cha. Đối với TH1 ptr->Display() thì chương trình sẽ chạy method Display() của class cha. Và nếu muốn để nó chạy method Display()
+của class con thì cta phải sử dụng đến kĩ thuật overload. Tức là kĩ thuật này khi ta trỏ tới cái object của class đó nó sẽ ưu tiên lấy cái định nghĩa của class con.
+Như ví dụ bên dưới class cha định nghĩa là void Display(), ở class con cta định nghĩa lại là void Display(string name) nó sẽ định nghĩa đè lên gọi là override. Và khi
+cta trỏ tới cái class cha bình thường nó sẽ lấy hàm void Display() được định nghĩa ở class cha nhưng khi ta dùng kĩ thuật overload nó sẽ lấy hàm void Display được
+định nghĩa ở class con. Giờ cta muốn nó định nghĩa lại nó sẽ ưu tiên lấy cái method ở class con thì ta sẽ thêm virtual ở trước method.
+**VD1 về virtual & pointer in Inheritance:**
+```C
+#include <iostream>
+#include <string>
+using namespace std;
+class DoiTuong{
+    private:
+        int ID;
+        string TEN;
+    public:
+        DoiTuong();
+        virtual void Input(int id, string ten);
+        virtual void Display();
+}
+class SinhVien : public DoiTuong{
+    public:
+        void Display(string name);
+}
+
+int main(){
+    DoiTuong dt;
+    SinhVien sv;
+
+    /*class cha lay dia chi cua class con*/
+    DoiTuong *ptr;
+    ptr = &sv; 
+
+    ptr -> Display(); // TH1
+}
+```
+
+- Ở ví dụ dưới này như ta thấy ở class con nó không định nghĩa lại method void display() của class cha mà trong method display() của class nó printf ra word(), nó sẽ nhảy vào thằng cộng cấp với nó và method char *word() cộng cấp với nó nên nó nhảy vào lấy dữ liệu. Và nên nhớ rằng method char *word() ở class con chưa phải là ghi đè mà là định nghĩa lại method. Và muốn ghi đề ta phải sử dụng cái method word() đó ở trong trường hợp cụ thể chứ không thể thông qua method khác để gọi tới nó(TH1 là ví dụ). Và nếu muốn class con khi gọi tới method display và cái method display đó nó ưu tiên gọi method word của class con mà không phải gọi method cộng cấp với nó thì ta sẽ sử dụng virtual. (virtual char *word()).
+
+**VD2 về virtual:**
+```C
+#include <iostream>
+#include <string>
+using namespace std;
+class Display{
+    public:
+        char *word(){ 
+            return (char*)"Class Display\n";
+        }
+        void display(){
+            printf("Test: %s\n",word());
+        }
+};
+class Child : public Display{
+    public:
+        char *word(){
+            return (char*)"Class Child\n";
+        }
+};
+int main(){
+    Display ds;
+    Child cd;
+
+    ds.display();   
+    cd.display();
+    
+
+    printf("Test: %s\n",cd.word()); // TH1 - ghi đè
+}
+
+```
+- **Tính đóng gói(encapsulation):**
++ Tính đóng gói là: khi khởi tạo 1 class không được phép truy cập các property trực tiếp mà phải thông qua method để truy cập tới các property. Tức là cta sẽ không để các property ở vùng public vì vùng public cho phép các object truy cập trực tiếp tới, vậy nên ta phải để các property ở vùng protected hoặc ở vùng private, nơi mà object không thể truy cập trực tiếp. Và khi đó ta sẽ sử dụng các method để ở vùng public và object sẽ phải thông qua các method ở vùng public để tác động vào các property. Và tại sao lại bảo vệ các property như vậy? Vì để tránh việc các property bị lấy ra sử dụng không đúng mục đích vì 1 số property chỉ là dữ liệu để nhập vào như các method input và 1 số property sẽ dùng để nhập vào và không dùng để lấy dữ liệu ra. Ví dụ như 1 property được lập trình để chạy tự động tăng dần đến 10 thông qua constructor và cta để nó ở public thì cta có thể từ object truy cập trực tiếp đến dữ liệu của property đó và thay đổi, dẫn đến dữ liệu bị sai sót.
+
+- **Tính trừu tượng(Abstraction)**
++ Dựa vào ví dụ bên dưới ta có thể thấy trong 1 hệ thống họ chỉ quan tâm tới việc nhập vào cái gì và lấy ra cái gì chứ không liên quan đến quá trình và mình cũng không cho phép user truy cập đến quá trình để chỉnh sửa, người ta chỉ được phép nhập các method cần nhập như phuongTrinhBacHai() hoặc lấy KQ ra ở method KetQua(). Còn các method thực hiện quá trình tạo ra kết quả như tinhDelta phải ẩn trong private hoặc protected.
++ Sự khác nhau giữa tính đóng gói và tính trừu tượng: Tính đóng gói thì các property không được phép truy cập trực tiếp mà phải thông qua method, còn tính trừu tượng thì những cái quá trình để giải ra kết quả cuối cùng sẽ bị ẩn đi. Mặc dù cùng nằm ở privated or protected nhưng ý nghĩa nó khác nhau.
+**VD Abstraction:**
+```C
+#include <iostream>
+class phuongTrinhBacHai{
+    private:
+        int x1;
+        int x2;
+        float tinhDelta(int a, int b, int c);
+        double KETQUA;
+    public:
+        phuongTrinhBacHai(int a, int b, int c){
+            tinhDelta(a,b,c) >= 0;
+
+            ....
+        }
+        double KetQua(){
+            return KETQUA;
+        }
+};
+
+```
+- **Tính đa hình(Polymorphism):**
++ Thì trong C++ cho phép các hàm có thể cùng tên với nhau nhưng khác parameter hoặc khác kiểu dữ liệu trả về.
++ Tính đa hình là 1 input có nhiều parameter khác
+**VD về polymorphism:**
+```C
+#include <iostream>
+#include <string>
+class TinhToan(){
+    private:
+        int a;
+        int b;
+    public:
+        void Tong(int a, int b){
+            printf("Tong: %d\n",a+b);
+        }
+        int Tong(int a, int b, int c){
+            return a+b+c;
+        }
+        double Tong(int a, double b){
+            return (double)a+b;
+        }
+};
+
+int main(){
+
+}
+```
+</details>
+<details>
+
+<summary><h1> STL </h1> </summary>
+STL (Standard Template Library) là 1 thư viện trong lập trình C++ cung cấp 1 tập hợp các template class và functions để thực hiện nhiều loại cấu trúc dữ liệu và thuật 
+toán phổ biến. Một số thành phần chính của STL:
+
+- **Interator theory:** cung cấp 1 cách chung để duyệt qua các phần tử của 1 container mà không cần biết chi tiết về cách container đó triển khai. Có thể nói Interator
+là 1 đối đối tượng cho phép truy cập tuần tự qua các phần tử của 1 container và nó giống như con trỏ, cho phép di chuyển qua các phần tử trong container (tức là 1 object của iterator được khai báo ra sẽ là 1 con trỏ). Và tại sao nó lại làm được vậy? Vì pointer sẽ nắm được địa chỉ của dữ liệu của container và cta chỉ cẩn sử dụng
+con trỏ đó để truy cập vào từng thành phần dữ liệu bằng việc sử dụng toán tử ++. VD như cta sử dụng vector hay list thì cũm chỉ cần ++ là sang được phần tử tiếp theo 
+để duyệt. Tuy nhiên không phải tất cả các iterator có chức năng tương tự như con trỏ. Và có 5 loại Iterator và mỗi loại iterator sẽ support cho từng container khác nhau và có 1 số container không cần sử dụng Iterator(Stack, Queue, Priority-Queue):
++ Random-Acess: support for -> Vector, Deque
++ Bidirectional: support for -> List, Map, Multimap, Set, Multiset.
++ Forward iterator:
++ Output Iterators:
++ Input Iterators: Đây là Iterator thấp nhất trong tất cả các Iterator và nó bị giới hạn về chức năng, nó chỉ được sử dụng trong 
+
+
+- **Container:** Một container là 1 cấu trúc dữ liệu chứa nhiều phần tử theo 1 cách cụ thể, có thể hiểu nó quản lí 1 không gian lưu trữ các property và tạo ra các method
+để cho người dùng sử dụng để truy cập tới chúng hoặc là truy cập trực tiếp thông qua iterators. Và dưới đây là 1 số container phổ biến
++ Vector:
++ List:
++ Map:
++ Array:
+
+</details>

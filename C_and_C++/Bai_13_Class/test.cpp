@@ -1,20 +1,25 @@
 #include <iostream>
-
-
-class SinhVien{
-
+#include <string>
+using namespace std;
+class Display{
     public:
-        int id;
-    
+        char *word(){
+            return (char*)"Class Display\n";
+        }
+        void display(){
+            printf("Test: %s\n",word());
+        }
 };
-
-
+class Child : public Display{
+    public:
+        char *word(){
+            return (char*)"Class Child\n";
+        }
+};
 int main(){
+    Display ds;
+    Child cd;
 
-    SinhVien Sv;
-
-    Sv.id = 10;
-
-    std::cout<<Sv.id;
-
+    ds.display();   
+    cd.display();
 }

@@ -1,4 +1,4 @@
-    <details>
+<details>
 <summary> <h1>COMPILER AND MACRO </h1> </summary>
 
 <details>
@@ -119,6 +119,7 @@ Tiếp theo là quá trình Linking: Như ta thấy ở 3 chương trình ví d�
 <summary> <h2> 2. Macro </h2> </summary>
 Là các chỉ thị tiền xử lý được xử lí trong quá trình Preprocessor gồm:
 - #include -> để thêm nội dung các file khác vào chương trình thường là các source .h
+
 **Ví dụ**
 ```C
     #include <stdio.h>
@@ -159,6 +160,7 @@ int main()
 
 ```
 **Ví dụ #if # elif #else**
+
 ```C
 #include <stdio.h>
 #define DEFINE_1    0
@@ -466,7 +468,7 @@ Trước khi sử dụng từ khóa Register biến i: 0.0003000 giây
 Sau khi sử dụng từ khóa Register biến i: 0.0000000 giây
 ```
 
-## 4. Volatile
+4. Volatile
 - Từ khóa này để cho trình biên dịch của chương trình luôn chạy dòng code đó vì nhiều trình biên dịch sẽ tối ưu hóa đoạn code là chỉ chạy 1 lần -> dẫn tới sai sót trong hệ thống nhúng, vì hệ thống nhúng có những exception nên khi quay về chương trình chính sẽ tiếp tục -> có thể gây sai sót. Khi dùng volatile giúp trình biên dịch hiểu là phải chạy dòng code đó lại.
 
 </details>
@@ -475,7 +477,7 @@ Sau khi sử dụng từ khóa Register biến i: 0.0000000 giây
 <details>
 <summary><h1>BÀI GOTO SETJUMP</h1></summary>
 
-## 1. Goto
+1. Goto
 - Goto cho phép chương trình nhảy từ lệnh goto đến 1 label đã được đặt trước trong cùng 1 hàm.
 - Sử dụng goto giúp thực hiện chương trình nhanh gọn, nhưng sử dụng nhiều khiến chương trình khó quản lý. Nên vì vậy chỉ nên dùng goto với những chương trình có nhiều vòng lặp
 Ví dụ về goto: Đây là chương trình chạy đến khi lớn hơn = 5 thì chương trình sẽ kết thúc. Đầu tiên nó sẽ chạy đi qua hàm if vì lúc này i = 0, rồi lúc này nó sẽ gặp lệnh goto start, lệnh này sẽ gọi ra cái label start và chương trình sẽ nhảy đến lable và tiếp tục chương trình, cho đến khi i>=5 nó mới vào điều kiện if và gặp goto end để nhảy tới lable end và lable end này nằm ở cuối chương trình, nó sẽ thực hiện nốt các lệnh còn lại và kết thúc chương trình.
@@ -496,7 +498,7 @@ int main(){
 }
 ```
 
-## 2. Setjmp.h
+2. Setjmp.h
 - Là thư viện trong ngôn ngữ C. Thư viện này cung cấp 2 hàm setjump và longjmp. Các hàm này để xử lý ngoại lệ trong C
 - Nó khác goto ở chỗ có thể thay đổi điều kiện giống if và nó có thể khai báo toàn cục, trong khi Goto chỉ sử dụng trong cùng 1 hàm 
 - Thường dùng để báo lỗi trong chương trình
@@ -925,17 +927,17 @@ int main()
 Trong hướng đối tượng có 4 tính chất tính kế thừa, tính trừu tượng, tính đa hình và tính đóng gói
 
 - **Tính kế thừa(Inheritance):**
-+ Về cơ bản tính kế thừa tức là việc sử dụng lại các property và method của 1 class lấy từ 1 class khác. Còn được gọi là class con và class cha
-+ Và các class con chỉ được kế thừa các property và method có quyền truy cập là public và protected của class cha.
-+ Và có 3 kiểu kế thừa public, protected và private. Các property và method được kế thừa từ class cha sẽ nằm ở quyền truy cập của class con tương ứng với kiểu kế thừa
+.Về cơ bản tính kế thừa tức là việc sử dụng lại các property và method của 1 class lấy từ 1 class khác. Còn được gọi là class con và class cha
+.Và các class con chỉ được kế thừa các property và method có quyền truy cập là public và protected của class cha.
+.Và có 3 kiểu kế thừa public, protected và private. Các property và method được kế thừa từ class cha sẽ nằm ở quyền truy cập của class con tương ứng với kiểu kế thừa
 Không thể kế thừa conductor.
-+ 1 số kiến thức khác : overide(định nghĩa lại) tức là class sẽ ghi đè method của class cha.
-+ Class con cũm không thể kế thừa constructor của class cha (nếu vẫn thưcj hiện thì bị lỗi compiler).
+.1 số kiến thức khác : overide(định nghĩa lại) tức là class sẽ ghi đè method của class cha.
+.Class con cũm không thể kế thừa constructor của class cha (nếu vẫn thưcj hiện thì bị lỗi compiler).
 - Class cha có 3 phạm vi truy cập (public, private, protected)
-+ Thì class con với kiểu kế thừa public thì các member với phạm vi truy cập ở class cha là public 
+.Thì class con với kiểu kế thừa public thì các member với phạm vi truy cập ở class cha là public 
 thì qua class con vẫn là public, nếu member ở class cha có phạm vi truy cập protected thì sang class con nó sẽ là protected.
-+ Đối với class con với kiểu kế thừa protected: thì những thằng public và protected từ class cha sang class con sẽ sang protected hết
-+ Đối với class con với kiểu kế thừa private: cũm tương tự protected thì các member từ class cha sang class đều nằm trong phạm vi truy cập private.
+.Đối với class con với kiểu kế thừa protected: thì những thằng public và protected từ class cha sang class con sẽ sang protected hết
+.Đối với class con với kiểu kế thừa private: cũm tương tự protected thì các member từ class cha sang class đều nằm trong phạm vi truy cập private.
 **Ví dụ tính kế thừa**
 ```C
     #include <iostream>
@@ -957,7 +959,7 @@ thì qua class con vẫn là public, nếu member ở class cha có phạm vi tr
         TEN = ten;
     }
 
-    class SinhVien :: public DoiTuong{
+    class SinhVien : public DoiTuong{
         
     };
     int main(){
@@ -965,7 +967,7 @@ thì qua class con vẫn là public, nếu member ở class cha có phạm vi tr
     }
 ```
 - **Virtual Inheritance:**
-+ Việc sử dụng con trỏ đối với tính kế thừa cũng có sự khác biệt là ta có thể sử dụng con trỏ object của class cha để lấy địa chỉ object của class con còn class con
+.Việc sử dụng con trỏ đối với tính kế thừa cũng có sự khác biệt là ta có thể sử dụng con trỏ object của class cha để lấy địa chỉ object của class con còn class con
 không lấy được địa chỉ của object class cha. Đối với TH1 ptr->Display() thì chương trình sẽ chạy method Display() của class cha. Và nếu muốn để nó chạy method Display()
 của class con thì cta phải sử dụng đến kĩ thuật overload. Tức là kĩ thuật này khi ta trỏ tới cái object của class đó nó sẽ ưu tiên lấy cái định nghĩa của class con.
 Như ví dụ bên dưới class cha định nghĩa là void Display(), ở class con cta định nghĩa lại là void Display(string name) nó sẽ định nghĩa đè lên gọi là override. Và khi
@@ -1037,11 +1039,11 @@ int main(){
 
 ```
 - **Tính đóng gói(encapsulation):**
-+ Tính đóng gói là: khi khởi tạo 1 class không được phép truy cập các property trực tiếp mà phải thông qua method để truy cập tới các property. Tức là cta sẽ không để các property ở vùng public vì vùng public cho phép các object truy cập trực tiếp tới, vậy nên ta phải để các property ở vùng protected hoặc ở vùng private, nơi mà object không thể truy cập trực tiếp. Và khi đó ta sẽ sử dụng các method để ở vùng public và object sẽ phải thông qua các method ở vùng public để tác động vào các property. Và tại sao lại bảo vệ các property như vậy? Vì để tránh việc các property bị lấy ra sử dụng không đúng mục đích vì 1 số property chỉ là dữ liệu để nhập vào như các method input và 1 số property sẽ dùng để nhập vào và không dùng để lấy dữ liệu ra. Ví dụ như 1 property được lập trình để chạy tự động tăng dần đến 10 thông qua constructor và cta để nó ở public thì cta có thể từ object truy cập trực tiếp đến dữ liệu của property đó và thay đổi, dẫn đến dữ liệu bị sai sót.
+Tính đóng gói là: khi khởi tạo 1 class không được phép truy cập các property trực tiếp mà phải thông qua method để truy cập tới các property. Tức là cta sẽ không để các property ở vùng public vì vùng public cho phép các object truy cập trực tiếp tới, vậy nên ta phải để các property ở vùng protected hoặc ở vùng private, nơi mà object không thể truy cập trực tiếp. Và khi đó ta sẽ sử dụng các method để ở vùng public và object sẽ phải thông qua các method ở vùng public để tác động vào các property. Và tại sao lại bảo vệ các property như vậy? Vì để tránh việc các property bị lấy ra sử dụng không đúng mục đích vì 1 số property chỉ là dữ liệu để nhập vào như các method input và 1 số property sẽ dùng để nhập vào và không dùng để lấy dữ liệu ra. Ví dụ như 1 property được lập trình để chạy tự động tăng dần đến 10 thông qua constructor và cta để nó ở public thì cta có thể từ object truy cập trực tiếp đến dữ liệu của property đó và thay đổi, dẫn đến dữ liệu bị sai sót.
 
 - **Tính trừu tượng(Abstraction)**
-+ Dựa vào ví dụ bên dưới ta có thể thấy trong 1 hệ thống họ chỉ quan tâm tới việc nhập vào cái gì và lấy ra cái gì chứ không liên quan đến quá trình và mình cũng không cho phép user truy cập đến quá trình để chỉnh sửa, người ta chỉ được phép nhập các method cần nhập như phuongTrinhBacHai() hoặc lấy KQ ra ở method KetQua(). Còn các method thực hiện quá trình tạo ra kết quả như tinhDelta phải ẩn trong private hoặc protected.
-+ Sự khác nhau giữa tính đóng gói và tính trừu tượng: Tính đóng gói thì các property không được phép truy cập trực tiếp mà phải thông qua method, còn tính trừu tượng thì những cái quá trình để giải ra kết quả cuối cùng sẽ bị ẩn đi. Mặc dù cùng nằm ở privated or protected nhưng ý nghĩa nó khác nhau.
+.Dựa vào ví dụ bên dưới ta có thể thấy trong 1 hệ thống họ chỉ quan tâm tới việc nhập vào cái gì và lấy ra cái gì chứ không liên quan đến quá trình và mình cũng không cho phép user truy cập đến quá trình để chỉnh sửa, người ta chỉ được phép nhập các method cần nhập như phuongTrinhBacHai() hoặc lấy KQ ra ở method KetQua(). Còn các method thực hiện quá trình tạo ra kết quả như tinhDelta phải ẩn trong private hoặc protected.
+.Sự khác nhau giữa tính đóng gói và tính trừu tượng: Tính đóng gói thì các property không được phép truy cập trực tiếp mà phải thông qua method, còn tính trừu tượng thì những cái quá trình để giải ra kết quả cuối cùng sẽ bị ẩn đi. Mặc dù cùng nằm ở privated or protected nhưng ý nghĩa nó khác nhau.
 **VD Abstraction:**
 ```C
 #include <iostream>
@@ -1064,8 +1066,8 @@ class phuongTrinhBacHai{
 
 ```
 - **Tính đa hình(Polymorphism):**
-+ Thì trong C++ cho phép các hàm có thể cùng tên với nhau nhưng khác parameter hoặc khác kiểu dữ liệu trả về.
-+ Tính đa hình là 1 input có nhiều parameter khác
+.Thì trong C++ cho phép các hàm có thể cùng tên với nhau nhưng khác parameter hoặc khác kiểu dữ liệu trả về.
+.Tính đa hình là 1 input có nhiều parameter khác
 **VD về polymorphism:**
 ```C
 #include <iostream>
@@ -1101,11 +1103,61 @@ toán phổ biến. Một số thành phần chính của STL:
 là 1 đối đối tượng cho phép truy cập tuần tự qua các phần tử của 1 container và nó giống như con trỏ, cho phép di chuyển qua các phần tử trong container (tức là 1 object của iterator được khai báo ra sẽ là 1 con trỏ). Và tại sao nó lại làm được vậy? Vì pointer sẽ nắm được địa chỉ của dữ liệu của container và cta chỉ cẩn sử dụng
 con trỏ đó để truy cập vào từng thành phần dữ liệu bằng việc sử dụng toán tử ++. VD như cta sử dụng vector hay list thì cũm chỉ cần ++ là sang được phần tử tiếp theo 
 để duyệt. Tuy nhiên không phải tất cả các iterator có chức năng tương tự như con trỏ. Và có 5 loại Iterator và mỗi loại iterator sẽ support cho từng container khác nhau và có 1 số container không cần sử dụng Iterator(Stack, Queue, Priority-Queue):
-+ Random-Acess: support for -> Vector, Deque
-+ Bidirectional: support for -> List, Map, Multimap, Set, Multiset.
-+ Forward iterator:
-+ Output Iterators:
-+ Input Iterators: Đây là Iterator thấp nhất trong tất cả các Iterator và nó bị giới hạn về chức năng, nó chỉ được sử dụng trong 
+.Random-Acess: support for -> Vector, Deque
+.Bidirectional: support for -> List, Map, Multimap, Set, Multiset.
+.Forward iterator: Iterator này sẽ cao hơn so với 2 Iterator input và output, nó là sự kết hợp của 2 Iterator, nó cho phép cả việc gán phần tử, lẫn truy cập phần tử 
+.Output Iterators: Giống như Input Iterator có chức năng rất hạn chế, chỉ được sử dụng trong các thuật toán 1 lần, khác cái nó không phải để truy cập phần tử mà để gán phần tử.
+VD về output iterator:
+```C
+// tinh chat cua output iterator tuc la cho phep gan 
+// lvalue la truy cap toi 1 cai dia chi de thay doi gia tri rvalue la lay du lieu cua 1 dia chi 
+
+// C++ program to demonstrate output iterator
+#include<iostream>
+#include<vector>
+using namespace std;
+int main()
+{
+    vector<int> v1 = {1,2,3,4,5};
+
+    //Declaring an iterator
+    vector<int> :: iterator i1;
+
+    // It means i1 similar pointer and it take first address of vector and it pass through elements of vector with output iterator just assign value for elements whereas input iterator just access memory of elements and takes value of them.
+
+    // And output iterator it just do it 1 time during 
+    for(i1 = v1.begin(); i1 != v1.end(); ++i1){
+        *i1 = 1;
+    }
+    return 0;
+}
+
+
+```
+
+.Input Iterators: Đây là Iterator thấp nhất trong tất cả các Iterator và nó bị giới hạn về chức năng, nó chỉ được sử dụng trong các thuật toán 1 lần, tức là các thuật toán xử lý container theo trình tự, sao cho không có phần tử nào được truy cập nhiều hơn 1 lần 
+VD về input iterator:
+```C
+// tinh chat cua input iterator tuc la truy cap va lay gia tri
+// lvalue la truy cap toi 1 cai dia chi de thay doi gia tri rvalue la lay du lieu cua 1 dia chi 
+
+// C++ program to demonstrate input iterator
+#include <isotream>
+#include <vector>
+
+using namespace std;
+
+int main(){
+    vector<int> v1 = {1,2,3,4,5};
+
+    vector<int> :: iterator i1;
+    for(i1 = v1.begin(); i1 != v1.end(); ++i1){
+        cout << (*i1) << endl;
+    }
+    return 0;
+}
+
+```
 
 
 - **Container:** Một container là 1 cấu trúc dữ liệu chứa nhiều phần tử theo 1 cách cụ thể, có thể hiểu nó quản lí 1 không gian lưu trữ các property và tạo ra các method
@@ -1114,5 +1166,12 @@ con trỏ đó để truy cập vào từng thành phần dữ liệu bằng vi�
 + List:
 + Map:
 + Array:
+
+</details>
+
+
+<details>
+<summary><h1> Template </h1></summary>
+
 
 </details>

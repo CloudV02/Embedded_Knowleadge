@@ -1,6 +1,7 @@
 #include "../header/file.h"
 #include "../header/node.h"
-
+#include "../header/main.h"
+extern Node_Member *HEAD_Node;
 
 void beginFile(){
     fptr = fopen("data.csv", "w");
@@ -14,7 +15,7 @@ void importData(){
 void inputData(){
     Node_Member *ptr = HEAD_Node;
 
-    while (ptr->next_Node != NULL)
+    while (ptr != NULL)
     {
         fprintf(fptr, "%s ,%d ,%s ,%d ,%c",ptr->dataMember.c_fullName,ptr->dataMember.u16_age, ptr->dataMember.c_address, ptr->dataMember.l_numberPhone,'\n');
         ptr = ptr->next_Node;

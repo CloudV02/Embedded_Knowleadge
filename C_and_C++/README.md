@@ -703,7 +703,7 @@ int main(){
 Các file sau quá trình build processing sẽ tạo ra các file thực thi như file.exe trên window hoặc như file.hex trên vi điều khiển để lưu vào bộ nhớ như SSD hoặc Flash. Sau đó khi chạy chương trình nó sẽ được copy lên bộ nhớ RAM để thực thi. Từ đó nó sẽ sinh ra các phân vùng nhớ để lưu trữ các dữ liệu lần lượt bao gồm Text segment, data segment, bss segment, heap segment, stack segment.
 
 ## 1. Text Segment
-- Đây là vùng nhớ chứa tập hợp các lệnh thực thi
+- Đây là vùng nhớ chứa tập hợp các lệnh thực thitry_catch.o
 - Trong quá trình chạy vùng nhớ này có quyền đọc và thực thi, và không có quyền ghi vào. Vậy nên các biến ở trong vùng text segment chỉ đọc được giá trị mà không thể thay đổi giá trị.
 - Các biến const global hay con trỏ kiểu char global sẽ được ghi vào vùng nhớ này. Còn với biến const, char * local thì dc lưu vào stack segment.
 Như ví dụ dưới đây ta có thể thấy địa chỉ của 2 biến nằm cách xa nhau biến const global sẽ được lưu ở vùng text, còn biến const local sẽ được lưu ở vùng stack. Đặc điểm chung là đều không thể thay đổi được biến const, còn khác nhau ở chỗ biến const local sẽ bị thu hồi khi ra khỏi hàm.
@@ -869,7 +869,7 @@ static thì chỉ sử dụng các biến static và hàm static bên trong hàm
 + protected: cho phép class truy cập, không cho phép object truy cập
 + private: không cho phép class con, lẫn object truy cập.
 ** Code class **
-```C
+```C++
 #include <iostream>
 #include <string>
 using namespace std;
@@ -939,7 +939,7 @@ thì qua class con vẫn là public, nếu member ở class cha có phạm vi tr
 .Đối với class con với kiểu kế thừa protected: thì những thằng public và protected từ class cha sang class con sẽ sang protected hết
 .Đối với class con với kiểu kế thừa private: cũm tương tự protected thì các member từ class cha sang class đều nằm trong phạm vi truy cập private.
 **Ví dụ tính kế thừa**
-```C
+```C++
     #include <iostream>
     #include <string>   
     using namespce std;
@@ -974,7 +974,7 @@ Như ví dụ bên dưới class cha định nghĩa là void Display(), ở clas
 cta trỏ tới cái class cha bình thường nó sẽ lấy hàm void Display() được định nghĩa ở class cha nhưng khi ta dùng kĩ thuật overload nó sẽ lấy hàm void Display được
 định nghĩa ở class con. Giờ cta muốn nó định nghĩa lại nó sẽ ưu tiên lấy cái method ở class con thì ta sẽ thêm virtual ở trước method.
 **VD1 về virtual & pointer in Inheritance:**
-```C
+```C++
 #include <iostream>
 #include <string>
 using namespace std;
@@ -1007,7 +1007,7 @@ int main(){
 - Ở ví dụ dưới này như ta thấy ở class con nó không định nghĩa lại method void display() của class cha mà trong method display() của class nó printf ra word(), nó sẽ nhảy vào thằng cộng cấp với nó và method char *word() cộng cấp với nó nên nó nhảy vào lấy dữ liệu. Và nên nhớ rằng method char *word() ở class con chưa phải là ghi đè mà là định nghĩa lại method. Và muốn ghi đề ta phải sử dụng cái method word() đó ở trong trường hợp cụ thể chứ không thể thông qua method khác để gọi tới nó(TH1 là ví dụ). Và nếu muốn class con khi gọi tới method display và cái method display đó nó ưu tiên gọi method word của class con mà không phải gọi method cộng cấp với nó thì ta sẽ sử dụng virtual. (virtual char *word()).
 
 **VD2 về virtual:**
-```C
+```C++
 #include <iostream>
 #include <string>
 using namespace std;
@@ -1045,7 +1045,7 @@ Tính đóng gói là: khi khởi tạo 1 class không được phép truy cập
 .Dựa vào ví dụ bên dưới ta có thể thấy trong 1 hệ thống họ chỉ quan tâm tới việc nhập vào cái gì và lấy ra cái gì chứ không liên quan đến quá trình và mình cũng không cho phép user truy cập đến quá trình để chỉnh sửa, người ta chỉ được phép nhập các method cần nhập như phuongTrinhBacHai() hoặc lấy KQ ra ở method KetQua(). Còn các method thực hiện quá trình tạo ra kết quả như tinhDelta phải ẩn trong private hoặc protected.
 .Sự khác nhau giữa tính đóng gói và tính trừu tượng: Tính đóng gói thì các property không được phép truy cập trực tiếp mà phải thông qua method, còn tính trừu tượng thì những cái quá trình để giải ra kết quả cuối cùng sẽ bị ẩn đi. Mặc dù cùng nằm ở privated or protected nhưng ý nghĩa nó khác nhau.
 **VD Abstraction:**
-```C
+```C++
 #include <iostream>
 class phuongTrinhBacHai{
     private:
@@ -1069,7 +1069,7 @@ class phuongTrinhBacHai{
 .Thì trong C++ cho phép các hàm có thể cùng tên với nhau nhưng khác parameter hoặc khác kiểu dữ liệu trả về.
 .Tính đa hình là 1 input có nhiều parameter khác
 **VD về polymorphism:**
-```C
+```C++
 #include <iostream>
 #include <string>
 class TinhToan(){
@@ -1099,16 +1099,63 @@ int main(){
 STL (Standard Template Library) là 1 thư viện trong lập trình C++ cung cấp 1 tập hợp các template class và functions để thực hiện nhiều loại cấu trúc dữ liệu và thuật 
 toán phổ biến. Một số thành phần chính của STL:
 
-- **Interator theory:** cung cấp 1 cách chung để duyệt qua các phần tử của 1 container mà không cần biết chi tiết về cách container đó triển khai. Có thể nói Interator
-là 1 đối đối tượng cho phép truy cập tuần tự qua các phần tử của 1 container và nó giống như con trỏ, cho phép di chuyển qua các phần tử trong container (tức là 1 object của iterator được khai báo ra sẽ là 1 con trỏ). Và tại sao nó lại làm được vậy? Vì pointer sẽ nắm được địa chỉ của dữ liệu của container và cta chỉ cẩn sử dụng
-con trỏ đó để truy cập vào từng thành phần dữ liệu bằng việc sử dụng toán tử ++. VD như cta sử dụng vector hay list thì cũm chỉ cần ++ là sang được phần tử tiếp theo 
-để duyệt. Tuy nhiên không phải tất cả các iterator có chức năng tương tự như con trỏ. Và có 5 loại Iterator và mỗi loại iterator sẽ support cho từng container khác nhau và có 1 số container không cần sử dụng Iterator(Stack, Queue, Priority-Queue):
+- **Interator theory:** cung cấp 1 cách chung để duyệt qua các phần tử của 1 container mà không cần biết chi tiết về cách container đó triển khai. Có thể nói Interator là 1 đối đối tượng cho phép truy cập tuần tự qua các phần tử của 1 container và nó giống như con trỏ, cho phép di chuyển qua các phần tử trong container (tức là 1 object của iterator được khai báo ra sẽ là 1 con trỏ). Và tại sao nó lại làm được vậy? Vì pointer sẽ nắm được địa chỉ của dữ liệu của container và cta chỉ cẩn sử dụng
+con trỏ đó để truy cập vào từng thành phần dữ liệu bằng việc sử dụng toán tử ++. VD như cta sử dụng vector hay list thì cũm chỉ cần ++ là sang được phần tử tiếp theo để duyệt. Tuy nhiên không phải tất cả các iterator có chức năng tương tự như con trỏ. Và có 5 loại Iterator và mỗi loại iterator sẽ support cho từng container khác nhau và có 1 số container không cần sử dụng Iterator(Stack, Queue, Priority-Queue):
 .Random-Acess: support for -> Vector, Deque
+Đây là iterator mạnh nhất vì nó không bị giới hạn về chức năng, nó sẽ gồm tất cả các tính chất của các iterator bên dưới và ngoài ra điều đặc biệt của iterator này là có thể truy cập bất cứ phần tử nào mà không cần duyệt lần lượt container điển hình ở đây chính là vector, giống như mảng vậy nó chỉ cần biết có bao nhiêu phần tử và nhảy được tới phần tử bất kỳ để lấy giá trị hoặc làm bất cứ gì mình muốn sử dụng gì từ nó
+
+
 .Bidirectional: support for -> List, Map, Multimap, Set, Multiset.
-.Forward iterator: Iterator này sẽ cao hơn so với 2 Iterator input và output, nó là sự kết hợp của 2 Iterator, nó cho phép cả việc gán phần tử, lẫn truy cập phần tử 
+Iterator chức năng của nó cũng để duyệt các phần tử trong container, như ta biết forward iterator nó chỉ duyệt được 1 hướng thì đối với bidrectional nó cũm có các tính chất tương tự với forward iterator nhưng khác ở chỗ nó có thể duyệt được 2 hướng tức là nó đang duyệt ++ lên thì nó có thể -- về khác với forward iterator nó chỉ có thể tiến hoặc lùi.
+```C++
+#include <iostream>
+#include <vector>
+using namespace std;
+int main(){
+    vector<int> v1 =  {1,2,3,4,5};
+    vector<int> :: iterator i1;
+
+    // can see that bidirectional can ++ and -- 
+    for(i1 = v1.begin(); i1 != v1.end();){
+        if(*i1%2 == 0){
+            i1++;
+        }
+        if(*i1%2 != 0){
+            *i1 = 2;
+            i1--;
+        }
+    }
+
+}
+```
+
+
+
+
+
+.Forward iterator: Iterator này sẽ cao hơn so với 2 Iterator input và output, nó là sự kết hợp của 2 Iterator, nó cho phép cả việc gán phần tử, lẫn truy cập phần tử. Ngoài ra nó có thể duyệt nhiều lần trong 1 lần khai báo iterator, tức là ngaoif viêcj nó kết hợp cả 2 tính chất của Input và Output Iterator là vừa truy cập để đọc và gắn vào phần tử thì nó còn tái sử dụng nhiều lần trong 1 chương trình thay vì 1 lần như Input và output iterator. Mà thêm nữa cả Input, Output và Forward Iterator đều là dịch chuyển theo 1 hướng và tuần tự tức là nó sẽ duyệt lần lượt từng phần tử 1 và không thể quay đầu lại cũng như không thể nhảy tới ngẫu nhiên các phần tử khác trong container.
+```C++
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main()
+{
+    vector<int> v1 = {1,2,3,4,5};
+    vector<int> :: iterator i1;
+    i1 = v1.begin();
+    while(i1 != v1.end()){
+        if(*i1 != new_value) {*i1 = new_value;} // forward iterator - can be assigned and access elements
+        i1++;
+    }
+}
+
+```
+
+
 .Output Iterators: Giống như Input Iterator có chức năng rất hạn chế, chỉ được sử dụng trong các thuật toán 1 lần, khác cái nó không phải để truy cập phần tử mà để gán phần tử.
 VD về output iterator:
-```C
+```C++
 // tinh chat cua output iterator tuc la cho phep gan 
 // lvalue la truy cap toi 1 cai dia chi de thay doi gia tri rvalue la lay du lieu cua 1 dia chi 
 
@@ -1135,9 +1182,9 @@ int main()
 
 ```
 
-.Input Iterators: Đây là Iterator thấp nhất trong tất cả các Iterator và nó bị giới hạn về chức năng, nó chỉ được sử dụng trong các thuật toán 1 lần, tức là các thuật toán xử lý container theo trình tự, sao cho không có phần tử nào được truy cập nhiều hơn 1 lần 
+.Input Iterators: Đây là Iterator thấp nhất trong tất cả các Iterator và nó bị giới hạn về chức năng, nó chỉ được sử dụng trong các thuật toán 1 lần, tức là các thuật toán xử lý container theo trình tự, sao cho không có phần tử nào được truy cập nhiều hơn 1 lần. Nói rõ hơn về cơ chế hoạt động là khi 1 iterator được khai báo và cái iterator đó chỉ được sử dụng đúng 1 lần để duyệt 1 container và không thể tái sử dụng iterator đó nữa.  
 VD về input iterator:
-```C
+```C++
 // tinh chat cua input iterator tuc la truy cap va lay gia tri
 // lvalue la truy cap toi 1 cai dia chi de thay doi gia tri rvalue la lay du lieu cua 1 dia chi 
 
@@ -1173,5 +1220,103 @@ int main(){
 <details>
 <summary><h1> Template </h1></summary>
 
+-  template được sinh ra ví dụ như 1 chương trình cần có 2 hàm tính tổng chẳng hạn int Tong(int a, int b) và float Tong(float a, float  b) thì nếu như không có template phải tạo ra 2 method nhưng nếu dùng template chỉ cần tạo ra 1 methoad còn kiểu dữ liệu của nó như nào do mình nhập vào.
+
+- **Syntax:**
++ template function: như ví dụ bên dưới thì các biến có kiểu dữ liệu var do template định nghĩa thì nó sẽ dựa vào cái kiểu dữ liệu truyền vào như nào mà kiểu dữ liệu của các var cũng thay đổi tương tự.
+```C++
+
+    /*template function*/
+    template<typename var, typename var1> // template<class var> cum dc
+    var Tong(var a, var1 b){
+        return (var)(a+b);
+    }
+
+    int main(){
+        // duoc khai bao Tong(3,8) boi vi ham duoc goi truc tiep ma khong can object nao nen khong can khoi tap cong kenh nhu class
+        printf("Tong 2 so %d", Tong(3,8.5));
+    }
+
+```
++ template class: 
+```C++
+    /*template class*/
+    template <typename type> 
+    class Sensor
+    {
+        private:
+            type data;
+        public:
+            SensorData(type initData) : data(initData){}
+            void updateData(type newData){
+                data = newData;
+            }
+            type getData const(){
+                return data;
+            }
+    }
+
+    int main()
+    {
+        /*khoi tao template class*/
+        SensorData<double> temperatorSensor(36.5);
+    }
+```
+
+</details>
+
+<details>
+<summary><h1> Namespace </h1></summary>
+
+    - Namespace là 1 cơ chế trong lập trình giúp tổ chức các biến các hàm, các lớp. Như ta biết chương trình sẽ có nhiều người viết thì nhiều lúc sẽ xảy ra việc chọn các cái hàm và các biến có tên giống nhau. Thì việc sử dụng namespace nó sẽ quản lý riêng các cái tên ấy, tức là cái tên đó nó sẽ thuộc 1 cái namespace khác nhau
+    VD: biến a thuộc 2 cái namespace khác nhau thì không làm sao
+    - Đặc điểm của namespace thì nó có thể có 1 cái namespace khác trong nó nữa, và nó có thể sử dụng using namespace ... để thay thế cái tên nó định nghĩa như using namespace std chẳng hạn. Cái namespace có thể mở rộng ở bất cứ file nào -> ví dụ là chúng ta vẫn có thể namespace std { int a; } và sử dụng std::a, tức là có thể mở rộng nó thỏa mái mà không cần phải vào cái namespace gốc
+
+</details>
+
+<details>
+<summary><h1> Lambda </h1></summary>
+
+- Nó là 1 cái hàm cục bộ / hàm vô danh nó có thể được khai báo và sử dụng ngay tại chỗ. Ứng dụng nó hay dùng là ở trong STL đặc biệt với các std::for_each và std::sort đây là những stl có tham sô đầu vào là 1 con trỏ hàm -> lambda hợp vì nó sử dụng xong sẽ giải phóng luôn, còn nếu hàm bthg sẽ vẫn ở trên bộ nhớ.
+- Lambda khác với hàm thông thường điểm gì? Thì nó sẽ khác ở vùng nhớ gọi, cách thức gọi như hàm bình thường thì nó sẽ dùng function call, còn với lambda nó sẽ giống 1 inline function. Ngoài ra lambda còn có khả năng nắm giữ trạng thái thông qua từ khóa mutable và lambda có thể truyền như 1 biến hoặc nó cũm không cần tên, gọi là chạy.
+
+- **Syntax:**
+    [capture] ( parameter )-> return type{}
+    + capture là nơi lambda lấy các biến từ bên ngoài vào by value[=], by reference[&] tức là không cho biến con trỏ
+    + parameter là tham số truyền vào cho lambda và khi thoát khỏi hàm nó sẽ mất thoi, như 1 hàm thông thường
+
+    Một số chú ý thông qua ví dụ bên dưới thì sayHello kia sẽ chứa địa chỉ của hàm Lambda.
+    **VD về việc khai báo lambda:**
+
+    ```C++
+        int main(){
+            // khai báo cơ bản
+            auto sayHello = [](){
+                cout<< "Hello World"<< endl;
+            }
+            sayHello();
+
+            // khai báo đầy đủ
+            int x;
+            auto Tong = [x](int a, int b)->int{
+                return a+b;
+            }
+            
+        }
+
+    ```
+    + Nói thêm về mutable trong lambda tức là khi cta cho 1 cái giá trị vào hàm thì khi thoát khỏi hàm nó sẽ bị giải phóng, thì lambda cũm vậy, nên nó dùng từ khóa mutable để được phép thay đổi giá trị của biến truyền vào.
+    **VD:**
+    ```C++
+        int main(){
+            int count = 0;
+            auto increament = [count]() mutable ->int{
+                return ++count;
+            }
+        }
+        increament(); // count = 1
+        increament(); // count = 2
+        /*tức là truyền biến tham trị nhưng vẫn không bị triệt tiêu giá trị mà nhờ từ khóa mutable mà nó sẽ thay đổi được giá trị*/
+    ```
 
 </details>

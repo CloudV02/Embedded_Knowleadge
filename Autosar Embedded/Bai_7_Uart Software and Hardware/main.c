@@ -36,8 +36,10 @@ void UART_Config(){
 	
 	UART_InitStruct.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	
+	// must be sync between 2 device
 	UART_InitStruct.USART_Parity = USART_Parity_No;
 	
+	// must be sync between 2 device
 	UART_InitStruct.USART_StopBits = USART_StopBits_1;
 	
 	UART_InitStruct.USART_WordLength = USART_WordLength_8b;
@@ -68,13 +70,30 @@ void USART_StringSend(USART_TypeDef *USARTx, uint8_t *data){
 		data++;
 	}
 }
+void TIM_Config(){
+	TIM_TimeBaseInitTypeDef Tim_InitStruct;
+	Tim_InitStruct.TIM_ClockDivision = TIM_CKD_DIV1;
+	Tim_InitStruct.TIM_Prescaler = 36000 - 1;
+	Tim_InitStruct.TIM_Period = 0xFFFF;
+	Tim_InitStruct.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseInit(TIM2, &Tim_InitStruct);
+	TIM_Cmd(TIM2, ENABLE);
+	
+}
+
+void delays(uint32_t time){
+	TIM_SetCounter(TIM2,0);
+	while(TIM_GetCounter(TIM2)<time * 1000);
+}
 
 int main(){
 	RCC_Config();
 	GPIO_Config();
 	UART_Config();
-	
-	while(1){
-		
-	}
+	TIM_Config();
+	while (1) {
+			USART_SendChar(USART1, 'h');
+			USART_SendChar(USART1, 'e');
+			delays(1);
+  }
 }

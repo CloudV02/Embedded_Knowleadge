@@ -50,5 +50,5 @@ int main()
     print_sort(arr,15);
     sort_tangdan(arr,15);
     print_sort(arr,15);
-    search_binary(arr,15,0,85);
+    search_binary(arr,15,0,6);
 }

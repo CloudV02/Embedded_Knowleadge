@@ -1,5 +1,5 @@
-# GPIO REGISTER
-================
+<details>
+<summary><h1> GPIO REGISTER </h1> </summary>
 
 1. Tạo project KeliC
 
@@ -19,8 +19,10 @@
 . General purpose output push-pull: Tín hiệu ra là digital 3.3v hoặc 0v
 . 
 
-# NGẮT VÀ TIMER
-================
+</details>
+
+<details>
+<summary> <h1> NGẮT VÀ TIMER </h1> </summary>
 
 - Ngắt là 1 sự kiện khẩn cấp xảy ra khiến cho chương trình chính đang thực thi phải dừng lại và nhảy sang thực hiện sự kiện khẩn cấp đó. Và sau khi thực hiện xong sự kiện khẩn cấp nó sẽ quay về chương trình chính để tiếp tục.
 
@@ -50,10 +52,12 @@ Vì timer là 1 phần bên trong của con vi điều khiển và nó không ph
 - TIMER: 
 Timer là mạch đếm logic nó sẽ đếm sau mỗi chu kỳ nhất định có thể đếm lên hoặc xuống do mình config.
 
-# CÁC CHUẨN GIAO TIẾP
-====================
+</details>
+<details>
+<summary> <h1>CÁC CHUẨN GIAO TIẾP</h1></summary>
 
-## 1. Truyền nhận dữ liệu
+<details>
+<summary> <h2> 1. Truyền nhận dữ liệu </h2> </summary>
 - Truyền nhận dữ liệu là các tín hiệu điện áp biểu diễn cho các bit. Với điện áp 0V tương ứng với bit 0,điện áp 3.3V hoặc 5V biểu diễn cho bit 1. Và vi điểu khiển sẽ chuyền 1 chuỗi các bit 0,1 qua các chân của vi điều khiển, để truyền nhận dữ liệu
 VD: Có 2 MCU, 1 MCU A truyền dữ liệu và 1 MCU B nhận dữ liệu cungf qua pin 0 thì con MCU A muốn truyền dữ liệu qua con B thì con A sẽ ghi cái điện áp tương ứng với bit muốn truyền lên chân pin 0 và con B sẽ đọc pin 0 để nhận dữ liệu
 
@@ -64,8 +68,10 @@ VD: Có 2 MCU, 1 MCU A truyền dữ liệu và 1 MCU B nhận dữ liệu cungf
 
 - Vì các chuẩn giao tiếp này sẽ liên lạc với nhau giữa các MCU hoặc với thiết bị khác có cùng chuẩn giao tiếp, -> MCU sẽ truyền nhận dữ liệu dễ dàng hơn.
 
+</details>
 
-## 2. SPI
+<details>
+<summary> <h2> 2. SPI </h2> </summary>
 - SPI (Serial Peripheral Interface) là chuẩn giao tiếp nối tiếp đồng bộ và hoạt động được ở chế độ song công tức là có thể vừa truyền vừa nhận cùng 1 lúc.
 + Nối tiếp đồng bộ tức là các bit sẽ truyền trên 1 dây nối tiếp nhau và đồng bộ cùng 1 xung clock do master chỉ định clock đó
 
@@ -85,8 +91,10 @@ VD: Có 2 MCU, 1 MCU A truyền dữ liệu và 1 MCU B nhận dữ liệu cungf
 - Các chế độ hoạt động: Có 4 chế độ hoạt động dựa vào 2 bit CPOL và CPHA
 + CPOL quyết định điện áp ban đầu của SCK xem nó phải kéo lên hay kéo xuống để thực hiện 1 xung clock
 + CPHA là thời điểm bit được truyền đi trong 1 xung, pha của tín hiệu
+</details>
 
-## 3. I2C
+<details>
+<summary><h2> 3. I2C </h2></summary>
 - Là chuẩn giao tiếp nối tiếp và đồng bộ sử dụng 2 dây SDA và SCL. Dùng được 1 master giao tiếp được nhiều Slave và truyền bán song công (tức là trong 1 thời điểm chỉ truyền hoặc chỉ nhận)
 - Các slave đều được nối chung trên dây SDA và SCL và có 1 điện trở kéo lên 
 
@@ -94,8 +102,10 @@ VD: Có 2 MCU, 1 MCU A truyền dữ liệu và 1 MCU B nhận dữ liệu cungf
 + Việc truyền nhận cũng giống như SPI í là mỗi bit ở chân SDA được truyền đi sẽ kèm với 1 xung ở SCL
 + Data frame sẽ bắt đầu bằng Start condition tín hiệu bắt đầu SDA sẽ được kéo thấp xuống trước SCL. Tương tự với trạng thaí Stop condition là trạng thái kết thúc của 1 frame truyền thì SDA sẽ đướcj kéo lên trước chân SCL.
 + Trong frame truyền sau khi bắt đầu sẽ là 7-10 address bit ,mỗi Slave sẽ có 1 cái địa chỉ riêng 1 cái id riêng. Nên giờ Master muốn truyền nhận cho Slave nào phải gửi 1 cái địa chỉ để xác định Slave muốn truyền nhận. Khi truyền xong địa chỉ cần xác định sẽ có 1 bit R/W để cho lệnh đọc hoặc ghi vào Slave của Master. Sau bit R/W sẽ là bit ACK. Vì Master và Slave chỉ truyền trên 1 pin vậy nên khi master truyền thì tất cả các Slave đều nhận được dữ liệu, nên sau khi nhận 7 bits address thì các Slave phải tự hiệu đươcj đấy có phải địa chỉ của nó hay không và gửi thông báo về cho Master biết -> bit ACK là để nhânj thông báo đó. Khi đó ACK đang ở mức 1 sẽ kéo về mức 0 để thông báo cho Master biết là có 1 Slave đã xác nhận. Tiếp theo Master sẽ đến 8 bits data truyền nhận và cũng có 1 bit ACK để thông báo cho Master về việc truyền nhận hoàn tất.
+</details>
 
-## 4. UART (Universal Asynchrous Receiver Tranmister)
+<details>
+<summary> <h2>4. UART (Universal Asynchrous Receiver Tranmister)</h2> </summary>
 - Là 1 giao thức truyền thông nối tiếp, không đồng bộ(vì không có dây Clock) 
 - Nó gồm 2 chân RX và TX, hoạt động song công (vừa truyền vừa nhận) và nó là giao thưcs chỉ 2 thiết bị giao tiếp với nhau
 - Vì không có chân Clock để báo hiệu khi nào truyền nên nó phải sử dụng cách căn thời gian. Nó sẽ định 1 giá trị chung để căn ngay khi con này truyền xong thì con còn lại sẽ nhận thì sau khoảng thời gian đó sẽ là 1 bit
@@ -109,3 +119,5 @@ VD: Có 2 MCU, 1 MCU A truyền dữ liệu và 1 MCU B nhận dữ liệu cungf
 Các bit này sẽ truyền dựa vào baudrate đã quy định hay chính là timer đã quy định giữa 2 con MCU
 + Bit parity là bit quy luật chẵn lẽ để check các bit data trước đó. 2 con MCU sẽ thống nhất quy luật chẵn lẻ của bit parity. Giá trị bit partity cuar bên truyền sẽ phụ thuộc vào số bit 1 trong bit data. Còn bit parity của bên nhận sẽ kiểm tra bit parity của bên truyền của khớp vơis mình không.
 
+</details>
+</details>

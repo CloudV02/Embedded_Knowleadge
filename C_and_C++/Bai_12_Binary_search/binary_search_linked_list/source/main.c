@@ -1,7 +1,7 @@
 #include "../header/main.h"
 #include "../header/node.h"
 #include "../header/file.h"
-
+extern Node_Member *HEAD_Node;
 
 void dataInfo()
 {
@@ -40,9 +40,11 @@ void dataInfo()
     New_Node(inforMember2);
     New_Node(inforMember3);
     New_Node(inforMember4);
-    printf("%d\n",HEAD_Node);
+
 }
 
 int main(){
+    dataInfo();
     beginFile();
+    inputData();
 }

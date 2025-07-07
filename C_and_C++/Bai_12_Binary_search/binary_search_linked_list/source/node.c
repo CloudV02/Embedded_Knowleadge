@@ -1,6 +1,5 @@
 #include "../header/node.h"
-
-
+Node_Member *HEAD_Node = NULL;
 void New_Node(const InfoMember infoMember){
     Node_Member *Node = (Node_Member*)malloc(sizeof(Node_Member));
     Node->dataMember.c_address = infoMember.c_address;

@@ -13,7 +13,7 @@ int main(){
 	GPIO_Config();
 	while(1)
 		{
-			NhapNhay();
+			Read_Input();
 		}
 		
 }
@@ -66,7 +66,7 @@ void Read_Input(){
 		}
 		else{
 			GPIO_SetBits(GPIOC, GPIO_Pin_13);
-		}
+		} 
 	}
 }
 void NhapNhay(){

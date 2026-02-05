@@ -1,0 +1,4 @@
+- bin chứa các file.o
+- BSW chứa các source code and include file of BSW layer
+- RTE contain source code and include file of RTE layer
+- SWC contain source code and include file of SWC layer.

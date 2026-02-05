@@ -1,0 +1,45 @@
+# MPU (Memory Protection Unit)
+
+Tại phần này mình sẽ lâpj trình về thanh ghi MPU nên mình sẽ tập trung nói chủ yếu về thanh ghi, cách hoạt động của các thanh ghi
+
+## 1.Lý thuyết
+Thì MPU như cái tên là nó sẽ bảo vệ vùng nhớ hoặc sở hữu hay làm bất cứ cái gì nó thích đối với các vùng nhớ nó sở hữu. Thì theo ta được biết nó sẽ có 8 region ở cortex m4, các region có thể ghi đè lên nhau và độ ưu tiên sẽ vào region cao nhất region 7, tức là càng region càng bé nếu đè lên thì những cái vùng ghi chung đó sẽ lấy thuộc tính của region cao hơn VD: region 1 và region 4 mà ghi chung vùng nhớ 0x20100 - 0x20110 chẳng hạn, thì cái vùng nhớ đó sẽ sở hữu các đặc điểm của region 4
+
+Cách để tìm lỗi thì khi xảy ra lỗi của MPU nó sẽ nhảy vào MemManage Exception hoặc Hardfauld và lỗi sẽ được thông báo vào thanh ghi MMFSR - MemManage Fault Status Register và nơi sẽ lưu địa gây ra lỗi là MMFAR - MemManage Fault Address Register.
+
+## 2. Thanh ghi
+
+**Thanh ghi MPU_CTRL**
+- Bit 2: PRIVDEFENA bit này sẽ cho phép truy cập vào default memory map ở chế độ privileged. Thì nói thêm thì dèault memory map là vùng không được cấp hình bởi MPU, tức là các vùng không nằm trong region nào. Và ở chế độ privileged là sao? Nếu để bit này là 0 thì sẽ không được phép truy cập luôn, tức là kể cả privileged hay unprivileged cũm không được. Còn nếu set lên 1 tức là nếu mình đang ở chế độ privileged sẽ được phép truy cập thỏa mái.
+
+- Bit 1: HFNMIENA bit này cho phép MPU hoạt động trong Hardfault và Memfault. Tức là sao ? Giờ ví dụ Hardfault hay Memfault nó nằm trong vùng quản lý của MPU là không được truy cập đến, tức là không đọc được, hoặc là nó không thuộc region nào của MPU và mình cũm không bật bit PRIVDEFENA lên -> cả 2 trường hợp đó xảy ra thì mình sẽ không bao h vào được hàm Hardfault hay Memfault -> khi có 1 lỗi xảy ra, nó sẽ tìm tới 2 cái hàm này để trả về kết quả fault, nhưng mà mình khóa con mịa nó vào bằng MPU rồi :)) thì giờ nó cố truy cập tới hàm đó, thì nó lại lỗi và nhảy vào hàm lỗi tiếp -> bị lồng lỗi. Vâyj nên bật bit này lên nó sẽ bỏ quả việc kiểm soát 2 hàm Fault này (Hardfault, Memfault).
+
+- Bit 0: Enable bit này chỉ đơn giản là bật MPU.
+
+**Thanh ghi MPU_RNR**: MPU Region Number Register
+- REGION: bit 0-7 là nơi chọn region, theo cortex m3,m4 có 8 hoặc 16 vùng, và mình dùng vùng nào thì ghi giá trị tương ứng, và 1 thời điểm chỉ có 1 vùng. Ví dụ chọn region 3 thì ghi số 3 vào -> REGION ở cortex sẽ chỉ được ghi từ 0->7, còn ghi từ 8->255 nó sẽ bị lỗi.
+
+**Thanh ghi MPU_RBAR**: Region Base Address Register
+
+- REGION - bit [3:0]: Chọn vùng nhớ thiết lập giống với thanh ghi MPU_RNR. Và nó sẽ có bit VALID cũm nằm trong thanh ghi này để mình chọn sử dụng region của cái thanh ghi này hay của thanh ghi MPU_RNR.
+
+- Bit 4 - VALID: với bit = 0 xác định region bằng thanh ghi MPU_RNR, bit = 1 xác định region ở thanh ghi này luôn.
+
+- Bit[31:N] - ADDR: Chứa Base Address của Region, tức là địa chỉ bắt đầu của region. Thì nói về N trước là nó sẽ dựa vào SIZE ở cái thanh MPU_RASR bên dưới. Tức là nếu ta để SIZE là 32byte tương đương với để giá trị trong thanh ghi SIZE là 5 (thực tế nó sẽ là 4 nhưng theo công thức sẽ là 4+1 và ta sẽ lấy 2^(4+1) = 32Byte, đọc tài liệu core để hiểu). Và N sẽ được xác định bằng 32log2 = 5 -> N = 5. Câu hỏi đặt ra là địa chỉ nó có giá trị 32bit cơ mà sao chỉ từ 5->31 sao đủ 32bit lưu địa chỉ? Thì ví dụ ở đây N = 8 đi thì tức là nó sẽ từ bit 8->31, tương đương với việc SIZE sẽ là 2^8 = 256Byte, và giờ theo quy tắc là cái địa chỉ base nó phải chia hết cho 256Byte. Và hay cái :)) những cái chia hết cho 256Byte lại có 8 bit đầu tức là bit 0->7 sẽ bằng 0 hết :)) vậy nghĩa là thực tế mình chỉ cần quan tâm đến bit 8->31 xem có những bit nào là 1, còn các bit dưới 8 đều bằng 0 hết. Vậy tức là đối với N bằng bao nhiêu thì các bit từ 0->N-1 sẽ là bit 0. Còn nếu mà mình set các thanh ghi REGION hay VALID trước đó, thì nếu mình muốn lấy địa chỉ thì mình mask lại thui, kiểu t biến để mask lại, hoặc tạo 1 cái define gì đóa.
+
+**Thanh ghi MPU_RASR**: MPU Region Attribute and Size Register.
+Thanh ghi này là thanh ghi cấu hình thoi thif nó sẽ có:
+
+- BIT 28 - XN: Bit này có nhiệm vụ là set cho vùng nhớ đó không được phép truy cập nếu mình set lên 1.
+
+- Bit [26-24] - AP: các bit thanh ghi này sẽ cho biết quyền truy cập vào region. À thì vào đọc bảng chứ ghi ra không hết, tại cũm dễ hiểu.
+
+- Bit [21:19,17,16] -TEX,C,B: nói chung là các bit này kiểu setup các thuộc tính nên đọc thẳng luôn trong tài liệu
+
+- Bit 18 - S: Shareable bit thì nó cho phép chia sẻ vùng nhớ trong ứng dụn Multicore. Thì ncl ít dùng :))
+
+- Bit [5:1] - SIZE: Kích thước của Region, thì nói chung bit này quan trọng, thì trước tiên ta sẽ nói về công thức tính size thực tế dựa trên trường này: Region = 2^(SIZE+1) , SIZE ở đây là mình chọn trong cái trường SIZE đó thì thấp nhất là chọn 4, cao nhất là 31.
+
+- Bit 1 -ENABLE : để bật region thoi.
+
+- bit 8-15 -SRD: Subregion tức là cái vùng nhớ mình cấp í sẽ chia ra 8 vùng nhớ nhỏ, ví dụ 256bytes tương đương SIZE = 7 (7+1) thì mỗi subregion sẽ là 32Bytes. Giờ mình ghi bit 1 (nhớ là từng bit đó ví dụ bật bit 7 thì region 7) lên ở bit nào tương ứng với region đó bị disable (hay đồng nghĩa vùng nhớ đấy sẽ không thể xâm phạm ). Ví dụ 0x02 (0b0000 0010) sẽ disable Subregion 1 (32-63Bytes), trong khi đó các sub khác vẫn hoạt động bình thường.

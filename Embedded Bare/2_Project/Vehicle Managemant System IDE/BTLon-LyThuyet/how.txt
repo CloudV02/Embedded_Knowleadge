@@ -1,0 +1,30 @@
+
+RFID: https://www.techtarget.com/iotagenda/definition/RFID-radio-frequency-identification
+
+
+- Cách hoạt động của RFID (Radio Frequency indentification) Module: (RFID MFRC-522 RC522 13.56Mhz)
+Về cơ bản 1 hệ thống RFID sẽ có: 
++ RFID reader hay transceiver (fixed readers and mobile readers)
++ RFID tag hay transponder (active RFID and Passive RFID: tức là RFID có thể di chuyển hoặc cố định ở 1 chỗ :'()
+reader hay tag đều sẽ có anten. Bên reader sẽ luôn phát sóng vô tuyến (RF), tag mà bắt được sẽ phản hồi lại reader (phát sóng cũm như bắt lại dựa vào anten). Còn đâu về tốc độ truyền hay range của sóng sẽ dựa vào tùy phần cứng của RFID. Ví dụ như RC522 là 13.26Mhz. Tức là reader sẽ phát ra sóng anten là 13.56Mhz và tag cũm vậy để phản hồi lại.
+
+Giờ ta sẽ nói kĩ hơn về các RFID tags: 
+Thì nó được cấu thành từ 1 IC, 1 anten, 1 lớp nền giờ ta sẽ giải thích, thì IC ở đây nó sẽ lưu trữ thông tin như ID, điều khiển việc phản hồi lại reader. Còn anten là sóng RF để thu và phản hồi lại, còn dữ liệu phản hồi là do IC gửi. Còn lớp nền như ta đọc :)) thì nó là vật liệu đỡ cơ học giữ anten và IC, làm từ nhựa mỏng hoặc giấy, lớp nhựa bọc xung quanh đó m bỏ cái RFID tag của m ra cái lớp nhựa m cầm là cái lớp nền. Còn cái RFID Inlay thì nó là phần lõi khi bỏ lớp nền chính là IC và Anten.
+
+Tiếp theo như ta nói nó sẽ có active RFID và passive RFID ngoài ra còn có semi-passive vậy nghĩa là sao ? 
++ Đầu tiên ta sẽ nói về active RFID tức là cái tag đó sẽ có nguồn riêng tự cấp cho IC và anten của tag đó. Sóng của radio có thể tự phát định kỳ hoặc là vẫn chờ được kích hoạt bởi reader. Vì có nguồn riêng nên nó phát sóng mạnh.
++ Tiếp theo ta sẽ nói về passive RFID tức là cái RFID tag này nó sẽ không có nguồn, cách để nó hoạt động là khi reader phát ra sóng tag sẽ thu năng lượng của sóng reader để chạy và tag sẽ sử dụng năng lượng đó để bật sống chip RFID của tag trong thời gian ngắn, sau đó gửi sóng về cho reader. Vì việc thu năng lượng từ reader nó không nhiều nên việc sóng sẽ truyền rất yếu, nhiều lúc nguồn cấp không đủ để bên reader đọc được ấy chứ.
++ Semi-passive RFID: thì nó cũm có pin nhưng chỉ cấp cho IC, không phát sóng định kỳ như bên active vì không cấp pin cho anten. Vậy nên để anten hoạt động thì sẽ phải chờ nhận được sóng từ reader để anten bên tag sẽ được kích hoạt (giống như passive), khác cái lúc này IC có nguồn nên việc phản hồi nó mạnh hơn passive khá nhiều.
+
+Cơ chế vật lý của truyền sóng: Near-field và far-field (tự tìm hiểu)
+
+RFID vs Barcode:
+
+RFID vs NFC:
+
+
+Thì mấy cái trên cũm hay vì đó là cơ chế vật lý thì sẽ hiểu rõ mạch của RFID nhưng cái quan trọng của ta ở đây là truyền dữ liệu của RFID tức là khi có RFID tags, thì RFID Reader truyền dữ liệu qua chân như nào.
+
+
+
+- SDcard: SPI

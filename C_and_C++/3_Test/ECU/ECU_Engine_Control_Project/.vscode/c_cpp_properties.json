@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "windows-gcc-x86",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "cStandard": "${default}",
+            "cppStandard": "${default}",
+            "intelliSenseMode": "windows-gcc-x86",
+            "compilerArgs": [
+                ""
+            ],
+            "compilerPath": "‪D:/msys2/ucrt64/bin/"
+        }
+    ],
+    "version": 4
+}

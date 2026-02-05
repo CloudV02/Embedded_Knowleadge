@@ -1,0 +1,52 @@
+servo sg90 use frequence 50Hz(20ms) PWM Period and but only range 1-2ms can be use. It means 1ms is 0 degree, 1.5 is 90 degree and 2ms is 180 degree.
+Servo đen với 1500 = 180 độ -> 500 = 0 độ, 2500 = 360 độ
+
+-> Timer set GPIOA = 20ms and the servo is controlled in range 1-2ms. 
+
+
+Set Time2 -> Xem Timer2 ở GPIO nào -> Stm32 pinout
+
+Timer2 có 4 channel này hmmm cái này làm t suy nghĩ có cần phải chọn channel cho timer hay chỉ chọn pin
+
+PA1 Timer2 channel 2
+
+RCC -> APB1 = TIMER2
+RCC -> APB2 = GPIOA
+
+tính toán để timer2 channel 2 chạy 20ms
+
+xong đó setup pwm 1ms - 2ms
+
+Ta có APB1 max 36MHz -> 36*10^6
+-> Bộ chia tần (PSC) hay Prescaler: 8/ (8*10^6) = 0.000001 
+-> Quyết định chu kỳ (20ms), Periode (ARR): 0.000001 * (20 000)= 0.02s = 20ms
+
+chia tần nhỏ để ARR lớn để cho cái dải setup góc quay rộng ra
+ví dụ ARR = 20 000 -> 1ms sẽ là 1000, 2ms sẽ là 2000
+còn ARR = 20 -> 1ms = 1 và 2ms = 2 -> :)) không biết setup khoảng ở giữa như nào luôn. Tại CNT không có số floating mà nó là thanh ghi đếm số int. Còn 1000-2000 -> CNT đến 1000-1001 .... -2000 rất nhiều giá trị 
+
+-> học setup PWM (xem t385 trong rm)
+
+Trước tiên ta sẽ nói về PWM mode nhá thì cơ bản là nó sẽ so sánh 2 cái giá trị ở 2 thanh ghi CNT và CCR
+Thì kiểu CNT sẽ đếm đến CCR và lúc đó nó sẽ đảo xung hoặc ngắt dì đó
+
+Những bit cần set
+
+Oke ncl những gì cần setup đều ở hết thanh ghi TIMx_CCMR1 or 2
+
+TIMx_CCMR1 -> OCxM : để xét mode nhá
+Vào hẳn rm thì thấy Bit 6:4 dùng để xét mode cho timer đó ví dụ như 110 là pwm 0 upcounting và channel 1 sẽ hoạt động luôn. Còn muốn hoạt động ở channel 2 thì set bit 14:12.
+TIM_OCMode
+
+TIMx_CCMR1->CC1S là bit chọn capture hay compare: nhưung mà như ta thấy thì bit 0 nó đã là output luôn ròi nên gần như chỉ cần setup khi mình dùng input.
+
+TIMx_CCMR1->OC1PE: Output compare preload enable thì với 1 ở đây là channel 1, còn channel 2 sẽ là OC2PE. Nghĩa là trong quá trình chạy chương trình mình cho phép việc reload lại giá trị CCR, tức là lúc đầu mình set xung lên ở mức 60% chẳng hạn lúc sau được phép set 40 or 50% ... còn off thì không được set bị lỗi hoặc gì đó. 
+(TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);)
+
+
+TIMx_CCER -> CCxP : để xét nó là xung lên hay xung xuống trước 
+tức là khi bắt đầu là xung xuống chẳng hạn thì sau khi CNT > CCR thì lúc này nó sẽ đảo làm xung lên. Và ngược lại nếu xét xung lên trước thì CNt > CCR sẽ thành xung xuống. (TIM_OCPolarity)
+
+TIMx_CCER : thanh ghi enable channel :)) siêu quan trọng (TIM_OutputState).
+
+TIMx_CCR1 (TIM_Pulse) set value và CNT sẽ đếm đến value của CCR và đổi xung.

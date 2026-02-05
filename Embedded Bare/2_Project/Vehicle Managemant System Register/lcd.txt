@@ -1,0 +1,131 @@
+LCD HD44780U
+Module I2C: PCF8574 có địa chỉ 0x27;
+
+Frame with I2C:
+
+Start -> Slave Address -> Control Byte -> Data byte -> Slave Address -> Control Byte -> Data byte ... Stop
+
+* Khái quát về LCD thì m nhìn trên LCD có bao nhiêu cái pin (16 cái) thì cơ bản 1 MCU phải nối với từng ấy cái pin :)) nên -> LCD quá tốt chân pin -> lúc này thêm 1 cái I2C module ngoài lắp vào. Để STM32 giao tiếp chỉ tốn 2 chân I2C thoi :))
+
+Các pin giao tiếp với LCD:
+
+- RS: 0 là chế độ cài đặt như clear màn hình hay set vị trí con trỏ, bật tắt ..
+1 là chế độ truyền data hay kí tự 'A','B' ... 
+- R/W: 1 là read, 0 là write
+- E: Start truyền / nhận data.
+- DB0-DB3: lower
+- DB4-DB7: upper
+
+Vậy với RS = 0 thì ta cần mã lệnh thì mới biết phải truyền như nào LCD mới hiểu.
+Với RS = 1 thì ta cũm cần mã lệnh data
+(Ngoài ra đọc trong datasheet khi ở chế độ R/W = 1 tức là read và RS = 0 tức là setting, thì read DB7 sẽ biết có busy flag hay không)
+
+- Check T17 trong datasheet để biết mã data
+- Check T24 trong datasheet để biết mã lệnh (CMD)
+
+Tầm này chắc làm được ròi
+
+Oke đầu tiên phải thiết lập I2C trước
+
+Chú í là SDA sẽ kéo xuống trước SCK 1 khoảng thời gian
+I2C cần phải setup: chế độ master
+Ở trang 757 có nói cách chọn.
+Clock control register có sm mode và fm mode thì sm là standard, fm là fast mode.
+
+Set ACK ở bit ACK
+Set mode: I2C Mode ở bit SMBUS
+Set Addressing mode là 7bit hoặc 10 ở bit ADDMODE trong thanh ghi I2C_OAR1
+Set Address của Slave trong thanh ghi I2C_OAR2 maybe hoặc I2C_OART1.
+
+* Thì xem them là còn phải clockspeed và duty cycle cà 2 đều ở I2C_CCR 
+
+- Để tính ra con số thì với mode standard
+T high = CCR * Tpclk1 
+(CCR: là giá trị ghi vào thanh ghi CCR 
+Tpclk1: lấy từ bus APB1 thoi T= 1/f và dựa vào bit FREQ nữa, cơ bản bit này nếu mình để max thì cũm như lấy từ APB1 ra thoi).
+T low = CCR * Tpclk1
+
+-> SCL hay clock của I2C: SCL = 1 / (T high + T low)
+Ví dụ này trong rm: For instance: in Sm mode, to generate a 100 kHz SCL frequency: 
+If FREQR = 08, TPCLK1 = 125 ns so CCR must be programmed with 0x28
+ (0x28 <=> 40d x 125 ns = 5000 ns.)
+
+
+08 ở đây tương đương f bus APB1 = 8Mhz -> T = 125 ns như trong kia
+Thì làm sao để tính ra con số CCR =  0x28, thì theo cơ bản
+
+fscl = 1/(T high + T low)
+Ta có T high = T low
+-> fscl = 1/2*T high
+-> T high = 1 / 2*fscl = 2*Tscl
+
+Mà T high = CCR * Tpclk1
+-> CCR = T high / Tpclk1
+Mà ta có T high = 2*Tscl kia ròi
+-> CCR = 2*Tscl / Tpclk1 tương đương Fpclk1 / 2*Fscl (lúc này giống cthuc trong chat gpt)
+
+-> CCR = 8Mhz / (2*100kHz) = 40 tương đương 0x28 hex -> điền vào thanh ghi thoi
+
+-> Ta sẽ có clock 100Khz
+Thì ví dụ này là với standard mode. Ngoài ra còn Fast mode thì t sẽ để công thức bên dưới.
+
+
+
+- Công thức với fast mode:
+If DUTY = 0:
+ T high = CCR * TPCLK1
+ T low = 2 * CCR * TPCLK1
+If DUTY = 1: (to reach 400 kHz)
+ T high = 9 * CCR * TPCLK1
+ T low = 16 * CCR * TPCLK1
+
+Vậy với DUTY = 1: thì sau khi t kiểu phân tích biến đổi như phần standard ấy 
+-> CCR = Fpclk1 / (25*Fscl)
+CCR set up ở thanh ghi CCR
+Fpclk1: Set up ở clock pin GPIO đầu vào và set tiếp với bit FREQR
+Vậy với DUTY = 0: -> CCR = Fpclk1 / 3*Fscl
+
+
+Vậy nói nãy h thì T high và T low là gì :))
+
+T high và T low cơ bản là thời gian xung ở mức cao và ở mức thấp thoi, tại sao lại phải tính toán clock cẩn thận vậy. Vì xung của I2C nó không phải Push-Pull mà là open-drain, tức là software có thể lập trình được xung xuống, còn xung lên là phải chờ việc hardware bên ngoài được nối như nào. Thì như ta được biết bên ngoài có điện trở kéo lên nguồn 5V, thì đó chính là hardware của i2c.
+
+Và tại sao xung low lại bị kéo dài hơn thì đơn giản thoi, tất cả các xử lý ACK là đều dựa vào xung low :)) kiểu như Slave kéo ACK xuống low là truyền nhận được, còn ACK mà vẫn xung high chứng tỏ bị lỗi ấy -> nó chả cần phải xử lý kéo xung, đọc xung. -> trong I2C nhận biết bằng xung low.
+
+Ngoài ra việc kéo lên xung high bị giới hạn time nhó. Kiểu như t nói xung high nó được kéo lên bằng phần cứng. Nếu mà mình set up clock nhanh quá thì phần cứng chưa kịp kéo dây lên 1, đã phải chuyển về mức 0.
+-> I2C TRISE register sẽ là nơi mình setup giới hạn, thì việc điền giới hạn là bao nhiêu sẽ phải dựa vào xung SCL thực tế để mà tính ròi.
+Dưới đây là 1 ví dụ trong rm:
+For instance: in Sm mode, the maximum allowed SCL rise time is 1000 ns.
+If, in the I2C_CR2 register, the value of FREQ[5:0] bits is equal to 0x08 and TPCLK1 = 125 ns 
+therefore the TRISE[5:0] bits must be programmed with 09h.
+(1000 ns / 125 ns = 8 + 1)
+
+* Oke được ròi thì tiếp theo ta sẽ làm tới phần LCD:
+T23 trong datasheet có bảo ta cần init những gì
+
+Oke đầu tiên ta nói về việc ta nhìn thanh ghi truyền ví dụ trang 24 trong datasheet đi RS R/W DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0. Tức là nhìn nó rất là đấy đủ 10 bit, thậm chí nếu nhìn nối vào chân từ I2C module tới LCD là 16 pin đàng hoàng luôn.
+
+Vậy tại sao cta chỉ sử dụng chế độ truyền 4 bit thoi. Tại vì cái I2C module thực tế nó chỉ có 8 pin, xem datasheet PCF8574 là thấy P0-P7, nó sẽ nối thực tế là các chân [ D7 | D6 | D5 | D4 | BL | E | RW | RS ] . (8 pin). 
+Vậy sao khi nhìn ở module ngoài ta thấy nó nối đầy đủ 16 pin? Đơn giản thoi sẽ có 2 pin của module chung 1 pin của PCF8574 có thể D7-D4 tương đương D3-D0. Và việc LCD chỉ đọc 4 bit là hoàn toàn hợp lí tại có thể các bit nó bị giống nhau, nhưng chỉ đọc 4 bit thì chả ảnh hưởng dì. (theo t đọc thì nó chỉ lấy 4 bit cao thoi và ví dụ 1 lệnh cmd 8 bit thì truyền 4 bit cao trước ròi truyền 4 bit thấp)
+
+Ngoài ra ta đọc thêm trang 33, E sẽ bật tắt mỗi lẫn truyền nhận
+
+được ròi thì t code Init nhớ thì trước tiên t phải viết hàm write 4 bit trước thì chỉ cần truyền vào thoi.
+Ròi tiếp theo là chuyển sang chế độ 4 bit mode :)) cái này vẫn chưa hiểu :)) 
+Đây ròi clm datasheet trang 46 :)) đấy quá trình chuyển sang mode 4 bit thì sau 3 cái 0x03 ấy, tiếp theo t vào cái 0x02 là chuyển sang chế độ mode 4 bit tại sao lại vậy.
+
+Thì với cái hàm truyền của mình ấy nó là truyền 4 bit cao là D7-D4; thì 0x02 nghĩa là D4 = 0 và D5 = 1 thì t chú ý trang 24 nó là các Instructions thì ở function set ta có DL = 0 tức D4 = 0 và D5 = 1 -> vào mode 4 bit (đọc ngay trang bên dưới ấy DL = 1: 8 bit, DL = 0: 4 bit)
+
+Giờ tiếp theo set các command thoi dựa vào trang 24,25 hết nha
+
+Giờ chú ý đến việc xuống dòng nhớ. Thì như t biết LCD có 2 dòng. Vậy sao xuống được dòng
+Thì đọc instruction của Set DDRAM Address T9, line 1 sẽ từ 0x00->0x4F, còn line 2 sẽ từ 0x40->0x67. Và nếu t để í thì từ hex đổi sang bin ấy bit số 8 luôn = 0, tại vì bit số 8 này là của DB7 Set DDRAM address T24 ấy. Đó thì giờ t cứ thêm cái bit ấy vào cơ bản 0x00 -> 0x67 chỉ lấp vào mấy cái ADD trong instruction Set DDRAM Address này thoi.
+
+
+
+
+
+
+
+
+  

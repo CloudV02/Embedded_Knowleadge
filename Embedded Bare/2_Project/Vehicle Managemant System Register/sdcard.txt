@@ -1,0 +1,147 @@
+flow chuẩn theo FATFS:
+
+main.c main.h -> fatfs.c fatfs.h -> ff.h ff.c -> diskio.h diskio.c -> 
+
+* main.c main.h
+trong hàm main này sử f_mount các thứ và 1 số FATFS các thứ -> sẽ sử dụng thư viện liên quan là fatfs.h và ff.h (nằm trong fatfs.h).
+
+* fatfs.c fatfs.c
+file này có retUSER = FATFS_LinkDriver(&USER_Driver, USERPath); hàm này sẽ liên kết các thông số mình khởi tạo với phần cứng bên dưới
+Các thông số khởi tạo:
+
+uint8_t retUSER;    /* Return value for USER */ nếu hàm FATFS_LinkDriver trả về là 0 nghĩa là thành công, 1 là lỗi (nói chung là chỉ là 1 biến trả về thoi)
+
+char USERPath[4];   /* USER logical drive path */ Đây là lưu trữ ổ cứng ảo: ví dụ "1:/" để cho nó giống kiểu "C:/", gọi là ảo là vì mình đặt tên cho nó và đương nhiên có thể đặt tên cho nhiều ổ cứng khác, nói chung là nó giống như là tên gọi kiểu hey m đến ổ 1 đi hoặc m đến ổ 2 đi, và mấy ổ này là do mình từ đặt tên tự tạo thông số các kiểu đấy.
+
+FATFS USERFatFS;    /* File system object for USER logical drive */
+Đây sẽ là 1 biến chứa toàn bộ thông tin của ổ đĩa ảo thì đầu tiên khi khai báo nó sẽ rỗng, thì khi ta sử dụng f_mount(); nó sẽ quét nhưng thanh ghi có thông tin về ổ đĩa như Bytes per sector, Sector Per Cluster, FAT offset, Root directory offset, FAT count, Loại FAT(12/16/32/...)
+
+Và đương nhiên FATFS kia là 1 cái struct còn nó ở file nào thì t không biết 
+
+FIL USERFile;       /* File object for USER */
+FIL ở đây là file đấy thì cơ bản là khi t muốn tạo 1 file mở 1 file t cần 1 biến đại diện để tương tác.
+
+Nói thêm về FATFS_LinkDriver(&USER_Driver, USERPath); 
+USER_Driver nó được khai báo ở file user_diskio.h ở kiểu dữ liệu của nó là 1 struct Diskio_drvTypeDef được khai báo ở trong file ff_gen_drv.h. Thêm nữa là dữ liệu lúc truyền vào là có ròi. Vậy nghĩa là dữ liệu sẽ được gắn đâu đó trong user_diskio và ff_gen_drv. USER_DRIVER này sẽ chứa địa chỉ hàm mà các hàm đó sẽ xử lý phần SPI bên trong Card. Tức là phần trên FAT chẳng hạn nó chỉ biết gọi f_read() lúc này làm sao để nó read được thì nó phải thông qua SPI và thực hiện đống thao tác CMD các kiểu mới động vào địa chỉ nó muốn read. Thì cái USER_DRIVER này sẽ xử lý cái SPI và tìm đến địa chỉ hàm read.
+
+Tổng kết: file này chủ yếu là 1 file trung gian giữa main và diskio (đến được diskio còn qua nhiều file trung gian nữa). Nhưng cơ bản như ta thấy là toàn các thông số các biến khởi tạo.
+
+các file liên quan: ff.h thì file này nó liên kết trực tiếp với main luôn. Dùng f_open các kiểu ở trên main là từ file này ra. Các file khác sẽ nói bên dưới.
+
+
+* user_diskio.h: là nơi khai báo USER_Driver và USER_Driver này được gán địa chỉ ở trong user_diskio.c line 60 - 71 đó. Được ròi thì cảm giác cái file này vẫn là file trung gian để tới phần diskio. File này gần như chỉ có công việc là khởi tạo và gán địa chỉ cho USER_Driver thoi.
+Ngoài ra các hàm khởi tạo ở đây như USER_initialize (BYTE pdrv); các kiểu ấy, là thực ra nó còn phải dựa vào các lớp khởi tạo sâu hơn cơ, tại như mình biết với hàm trong C ấy, thì hàm hoặc biến khởi tạo, nó sẽ ra địa chỉ ngẫu nhiên. Còn đương nhiên trong SD card như này thì không được phép thế, nó gần như là 1 địa chỉ cố định có kiểm soát và việc mình gọi hàm như USER_initialize (BYTE pdrv); nó cần phải liên kết xuống lớp dưới nữa. Thì đó chính là SD_disk_initialize(pdrv); nó nằm ở file fatfs_sd.c, thì ở file này ta thấy cái địa chỉ được gửi vào  USER_initialize (BYTE pdrv); có thể là địa chỉ của các hàm xử lý SPI (SPI của bên SD Card). Thì nghĩa là phần link bên dưới chính là việc link giữa MCU và SPI của SD Card. Và include cuối cùng của file này là diskio.h
+
+* ff_gen_drv.h: file này giống kiểu thực hiện quá trình link giữa FAT bên trên với bên dưới như diskio và ff ấy. Tức là giờ cái file này sẽ ở chính giữa luôn giống như RTE ấy. Và include cuối cùng của file này là diskio.h và ff.h
+
+* diskio.h liên kết cuối cùng là ff_gen_drv.h -> ff.h sẽ là cái cuối.
+
+-> Phải nghiên cứu lại việc USER_Driver nó giống liên kết với SPI hơn, và xem fatfs_sd.c để hiểu xem có đúng là như thế không. Xong tiếp tục nghiên cứu về diskio file và cuối cùng là ff.c và ff.h (trùm cuối).
+
+* Vậy bây h t hệ thống lại cho đúng này key của cái này nó sẽ nằm ở 
+
+FATFS_LinkDriver(&USER_Driver, USERPath); 
+và ff.c 
+
+được ròi thì ví dụ với f_write() chẳng hạn trên thực tế ở f_write này nó sẽ xử lý dữ liệu, xử lý các thông tin mà f_mount và f_open() cung cấp. Và f_write() này sau khi xử lý nó sẽ biết là à cái mình định ghi vào này nó nằm ở đâu trong sd card và mình cần ghi vào địa chỉ ở đâu trong sd card. Và từ đó sẽ gọi disk_write(); thì như cta được biết đưa vào disk_write() là nó sẽ bắt đầu ghi vào bộ nhớ trực tiếp ròi. Thì lúc này disk_write sẽ tìm tới USER_Driver có địa chỉ hàm driver nó làm việc đó chính là SPI và lúc này sẽ ghi thẳng vào sd card luôn (ghi vào thanh ghi địa chỉ các kiểu)
+
+nói thêm về f_mount và f_open():
+f_mount() - sẽ đọc cấu trúc file system size sector, số FAT, số byte, vùng data bắt đầu từ đâu ... lưu tất cả vào biến FATFS -> lúc này nó sẽ biết sd card tổ chức ra sao
+Vậy những cái nó đọc được là nó đọc ở đâu, thì f_mount() sẽ đọc là địa chỉ đầu gọi là vùng boot sector, thì nôm na vùng boot sector này nó giống bảng vector table. Vậy cái vùng boot sector này do ai tạo ra ? thì nó đươc window format :)) tức là t cắm cái sdcard này vào window và nhờ nó format cái sd card hộ. Thì window sẽ đọc CSD register để biết mấy cái thông tin như dung lượng, block size. Và lúc này Window sẽ tạo file system, tức là cái cluster :)) trong sd card không có nhớ, cluster là do window format tạo ra dựa vào dung lượng nó lấy được từ sd card, nó chia thành nhiều phần nhỏ (cluster). Đó từ đó nó tạo ra vùng boot sector. Thêm nữa là stm32 hoàn toàn có thể tự tạo 1 boot sector riêng vì bản chất của boot sector vẫn là đọc thanh ghi và tự chia vùng nhớ cluster, thì stm32 mà mình code chay vẫn được.
+
+Đó còn việc boot sector chứa những thông tin gì thì có thể lên mạng đọc là chuẩn nhất, nhưng cơ bản cái sector 0 sẽ có các thông tin cần thiết để f_mount đọc. Hoặc ví dụ sector 1->n gì đó sẽ là chứa thông tin của các cluster (Ví dụ với 1000Kb nó tạo ra 1000 cái cluster 1Kb -> boot sector sẽ quản lý các cluster xem cái nào còn trống).
+
+
+
+f_open() - sẽ xử lý directory như tìm thư mục có tồn tại hay không, tìm file có tồn tại hay không nếu không có thì tạo. Nếu file có sẵn thì lấy thông tin của file đó như địa chỉ cluster, kích thước file, xong Load vào struct FIL. Còn nếu chưa có file thì cấp phát cluster. -> đây là xử lý file system
+
+
+Vậy với f_mount() là xử lý ở vùng boot sector cụ thể là với sector 0, còn với f_open() là sẽ làm việc với cluster, nó sẽ xem bảng FAT table là cái file.txt gì đó open đã tồn tại hay chưa, nếu chưa thì tạo, và trả về các dữ liệu của cluster đó. 
+
+
+Nói chung là f_open() và f_mount() nó chỉ trả về thông tin, còn phần xử lý thông tin đó là cái f_write(), f_read().
+
+
+
+* Phân tích hàm main():
+
+- Để biết rõ hơn struct FIL và FATFS và enum FRESULT này vào ff.h
+FATFS FatFs; 	//Fatfs handle
+FIL fil; 		//File handle
+FRESULT fres; //Result after operations
+
+
+
+	
+
+
+Khởi tạo SPI
+CMD0->CMD8->CMD58->ACMD41->CMD58
+T287 sequence init SPI
+
+
+Read block: CMD17 (read single block), CMD18 (read multiple block)
+Write block: CMD24
+
+CMD0: Reset
+CMD8 
+ACMD41
+ACMD6: Bus width
+CMD16: Block Length
+
+LBA_t = QWORD or DWORD (unsigned long or long long)
+BYTE = unsigned char
+UINT = unsigned int
+
+
+FATFS:
+Sử dụng các cái hàm để ghi vào các section của FAT FS
+-> FAT.c
+
+* disk_initialize(BYTE pdrv);
+
+khởi tạo ổ đĩa 
+Ta có: BYTE pdrv /* Physical drive nmuber to identify the drive */
+tức là FATFS nó hỗ trợ nhiều nên tảng như SDcard, Flash, RAM,... tức là nó không biết m đang nạp vào cái gì, thì m bảo nó biết và nó hỗ trợ mấy cái đấy
+
+
+* disk_status(BYTE pdrv);
+
+check trạng thái ổ đĩa
+
+
+* disk_read(BYTE pdrv, BYTE *buff, LBA_t sector, UINT count);
+
+buff: là buffer lưu trữ data
+
+sector: chính là block trong datasheet ấy chắc dùng mấy cái CMD16 chẳng hạn để set length
+
+count: là đọc số dữ liệu của bao nhiêu sector.
+
+
+
+* disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UNIT count);
+gần như tương tự với read, khác cái buff lúc này là truyền dữ liệu vào, thay vì đọc.
+
+
+disk_ioctl(BYTE pdrv, BYTE cmd, void *buff); nó dùng để lấy 1 số thông tin đặc biệt, ví dụ nó gửi thông tin cho sector để lấy thông tin như kích thước của sector đó, chứ không phải đọc ghi.
+
+block sector: là block lớn hay sector
+block allocation: là của cluster.
+
+
+
+user area -> Allocation Unit(AU) -> Recording Unit (RU)(16KByte)
+
+
+
+
+
+
+
+
+
+
+
+
+

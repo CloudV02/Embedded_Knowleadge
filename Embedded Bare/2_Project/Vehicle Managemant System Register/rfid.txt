@@ -1,0 +1,120 @@
+Thì rfid sẽ là gửi dữ liệu thông qua spi
+
+-> set up spi của vdk trước, sau đó sẽ gửi dữ liệu và phản hổi dữ liệu (đó đơn giản là thế thoi :)))
+
+Này gần như nó làm hết cho rồi :)
+http://vidieukhien.org/stm32f103c8t6-giao-tiep-frid-rc522.html
+
+- thiết lập spi
+- thiết lập gpio cho chân cs lên 1
+
+- RC522_Init()
+Lưu ý Init ở đây gần như là chỉ Init các vấn đề giữa Reader và Card không có vấn đề nào giữa reader và MCU
+ (1) Reader to card 100 % ASK, Miller encoded, transfer speed 106 kBd to 848 kBd.
+ (2) Card to reader subcarrier load modulation, Manchester encoded or BPSK, transfer speed 106 kBd 
+to 848 kBd.
+kia là 2 mục mà mình sẽ setup cho rfid rc522 (đây là 2 mục có trong rm trang 8). Giờ mình sẽ đi giải quyết từng tí
+
+1. Reader to card
+
+* Đầu tiên là nói về tốc độ truyền Baudrate 106-848
+-> Set ở TxModReg và RxModReg nhưng mà 0x00 là ra 106kBd ròi đây là tốc độ truyền của CARD và READER không phải với MCU đou.
+
+* 100% ASK được dùng để khi truyền giữa card và reader thì cái biên độ dao động lúc này sẽ là 0 và 1. Nếu chỉnh 20% ASK chẳng hạn thì biên độ nó giảm 20% -> 100% là giảm 100% lúc này chỉ có 0 và 1 dễ hiểu hơn nhiều.
+-> Set TxASKReg
+
+* Miler encoding: bit1 tức là mức tín hiệu low, bit0 mức tín hiệu high. Bởi vì ASK 100% -> ASK = 1 mà 100% tức là biên độ về 0.
+
+miler encoding sẽ dựa vào 2bit liên tiếp nhau. Nếu tắt sóng ở đầu của bit tức là bit 1 (vì biên độ hay sóng lúc này bị mất), còn bit 0 sau bit 1 vì bit 1 bị tắt sóng nên khi sang đầu bit 0 sẽ không phát hiện được chuyển mức mà phải đo ở giữa bit 0 -> phát hiện đó là bit 0. Và việc kiểm tra bit như này sẽ có 1 bit time nhất định, có thể là 106 kBd này là tốc độ truyền 1 bit sẽ chia ra làm 2 lần check lúc đầu và lúc giữa. NCL nếu bit chuyển mức từ 0->1 hoặc 1->0 thì nên check ở giữa cho dễ nhận biết, tại lúc mới đầu chuyển mức đổi bit tín hiệu chưa ổn định -> dễ bị sai. Còn 2 bit 1 lên tiếp hoặc 2 bit 0 lên tiếp thì nó dễ ròi :)). Và đó là lí do bật miler encoding, còn nếu không bật :)) thì nó làm gì encoding cho thì hiểu thế nào được.
+-> Set ở RxSelReg 
+
+2. Card to reader.
+load modulaton: cơ chế hấp thụ năng lượng của reader, bên card sẽ có 1 trở tải, hấp thụ năng lượng và sau đó trả năng lượng lại bằng việc mở tải -> reader lại trả về đúng tần số -> dựa vào sự chênh lệnh sóng sau khi đóng tải và mở tải -> tìm được thông tin card gửi đến. Sử dụng Manchester Encoding để giải mã cái sự chânh lệch sóng đó áp dụng với baudrate 106kBd, còn với baudrate lớn hơn sẽ sử dụng BPSK.
+-> Sử dụng thanh ghi RxSelReg với bit 7 bắt reader giải mã load modulation và chọn maschester hay BPSK.
+-> RFCfgReg thì đây là thanh ghi của hệ số khuếch đại. Thì khi card trả về tức là đóng tải và mở tải nó sẽ tạo ra 1 cái sóng sideband (13.56Mhz/16) tương đương với +-847kHz thì cái 847kHz này sẽ được +- với 13.56Mhz -> cần khuếch đại tín hiệu 847Khz này lên để encoding manchester giải mã.
+
+
+
+Tiêu chuẩn ISO14443A có những gì:
+- REQA (Request command): Ý là muốn hỏi trong vùng từ trường này có thẻ nào hay không? Tức là reader sẽ phát ra tín hiệu chính là phần reader to card (ASK, Miler) ngoài ra còn setup timer là time chờ tín hiệu ATQA phản hồi, và setup số bit mà được truyền ra ngoài để check vùng từ trường.
+Timer ở đây sẽ bao gồm thời gian phát ra 1 tick, và thòi gian gửi REQA và chờ ATQA gửi bit phản hồi
+->  RC522_WriteReg(TModeReg, 0x80); /* set up tự động bật lại timer mỗi lần gửi / nhận */
+    RC522_WriteReg(TPrescalerReg, 0xA9); /*set up 1 tick là bao lâu */
+    RC522_WriteReg(TReloadRegH, 0x03);
+    RC522_WriteReg(TReloadRegL, 0xE8); /*H và L này là setup time chờ bit phanr hồi register * timetick */
+
+- ATQA (Answer To request): Ý nó muốn nói là nếu có thẻ nó sẽ trả về 2 byte, 2 byte này bao gồm thông tin
++ Thẻ có nhiều tầng UID không
++ Thẻ loại gì (Classic, Ultralight…)
++ Thẻ hỗ trợ gì cascade level không...
+- ANTICOLL (Anti-Collision): Kiểu nếu mà có nhiều thẻ, thì nó sẽ giúp reader tách UID từng thẻ 1 (nó dựa vào thanh ghi ... của RC522)
+
+- SELECT: Muốn nói là khi có UID của từng thẻ ròi, reader sẽ vào bước SELECT để xác nhận UID, Thẻ trả về SAK, SAK cho biết full hay caseade(tìm hiểu cái này sau), thẻ loại gì
+
+
+
+
+->  RC522_WriteReg(TModeReg, 0x80); /* set up tự động bật lại timer mỗi lần gửi / nhận */
+    RC522_WriteReg(TPrescalerReg, 0xA9); /*set up 1 tick là bao lâu */
+    RC522_WriteReg(TReloadRegH, 0x03);
+    RC522_WriteReg(TReloadRegL, 0xE8); /*H và L này là setup time chờ bit phanr hồi register * timetick */
+
+    TxASKReg; /*Chọn  ASK 100%*/
+    RFCfgReg; /*set 48dB*/
+    ModeReg; /*set CRC*/
+    TxControlReg; /*Bật anten*/
+
+
+    RxSelReg; /*Bật manchester set sẵn khi reset ròi*/
+    TxSelReg; /*Bật Miler nhưng mà reset nó set sẵn ròi*/
+    TxModeReg; /*Set tốc độ truyền thì với 0x00 sẵn 106kBd*/
+    RxModeReg; /*Set tốc độ truyền thì với 0x00 sẵn 106kBd*/
+
+1 số thanh ghi chú ý: BitFramingReg, CollReg
+
+
+Sau khi Init xong chú ý phải gửi 1 frame nhỏ chính là BitFramingReg, lúc RC522 mới lấy dữ liệu về và giải mã gửi vào FIFO. Và nếu nhìn vào code mẫu thì ta có thể thấy mỗi một phần trong tiêu chuẩn ISO đều có 1 hàm
+
+MFRC522_Request: ATQA 
+MFRC522_ToCard: REQA
+MFRC522_Anticoll: ANTICOLL
+MFRC522_SelectTag: SELECT
+MFRC522_CalculateCRC: CRC
+MFRC522_Auth: Auth
+MFRC522_READ/WRITE: READ/WRITE
+
+Thì ở bên trên t đã nói qua về REQA,ATQA,ANTICOL,SELECT rồi, còn 3 cái còn lại chưa nghiên cứu kĩ nhưng nó cũm nằm trong tiêu chuẩn ISO. Đó thì các hàm hiện tại trong code là dựa theo tiêu chuẩn. Hiểu các tiêu chuẩn này hoạt động là làm được hàm.
+
+
+
+* RC522_ToCard sẽ làm những gì ?
+Theo lý thuyết là nó sẽ bắt đầu truyền sóng ra ngoài để tìm Card 
+-> set up Send và bitframe 
+Đầu tiên thì ta sẽ biết là để biết sóng truyền đi đã nhận được tín hiệu trả về hay chưa thì nó sẽ luôn có bit or register gì đó để báo hiệu, nếu ta thực hiện polling thì cách duy nhất để phát hiện là ta check FIFOlevelReg register này sẽ cho mình biết số byte hiện có trong FIFO.
+Còn bình thường để muốn biết việc truyền nhận thực hiện được chưa thì sẽ thông qua các cờ báo của thanh ghi ComIrqReg -> phải sử dụng các thanh ghi IRQ
+
+Vậy nên ta cần Init các thanh ghi IRQ trước ròi mới bắt đầu Send data đi.
+
+
+ComlEnReg: Enable IRQ
+ComIrqReg: Check Bit IRQ
+ErrorReg: Đây là nếu Bit bị lỗi có thể check ở đây
+FIFOLevelReg: Nó sẽ cho biết số byte hiện hữu
+BitFramingReg: có bit send data
+CommandReg: dùng để gửi lệnh bắt đầu truyền thôi
+
+Giải thích fifobuffer&0x30: vì ta có 1  bit RX IRQ thì không nói nhớ, còn bit IdleIRq là bit set lên 1 khi mà cái command thực hiện xong, thì command ở đây chính là cái RC522_WriteRegister(COMMAND_REG,CMD_TRANSCEIVE); đó thì command CMD_TRANSCEIVE nghĩa là bảo RC522 vào quá trình truyền nhận data đi. Đó thì đó chính là quá trình RC522_ToCard hay REQA -> bit IdleIRq  được set lên nghĩa là quá trình truyền nhận từ card đã xong.
+
+Giải thích tại sao phải đọc bit RXLastBit[2:0] của ControlReg bởi vì trong FIFO nó chứa được nhiều byte thì các byte trước sẽ luôn đầy vì bit nó đi theo kiểu đẩy dần vào buffer mà first in last out. Đó byte cuối sẽ là byte dễ bị lỗi nhất vì nó có thể mới chứa 3bit và quá trình truyền nhận dừng lại -> còn 5 bit trống nhưng mà giá trị trả về trong FIFOlevel nó vẫn tính 3bit với 5bit đó là 1 byte. -> Ta sẽ check RXLastBit[2:0] để biết được số bit lỗi và bit thực, nếu RXLastBit = 0 -> 8 bit đó đều hợp lệ 
+
+Được ròi giờ ta sẽ nói về việc khi m truyền bit vào FIFO để gửi đi cho card. Thì phải gửi cái gì để card hiểu ?
+Đó thì có nhiều command lắm nhưng trong code chỉ sử dụng 2 command chính là:
+0x26 REQA hay chính là cái phần respone và sau đó to card lúc này nó sẽ gửi về thông tin của thẻ như loại thẻ hoặc level UID.
+0x93 ANTICOLL thì khi gửi đi nó sẽ chọn thẻ UID cấp 1, nếu ta gửi thêm 0x20 nó sẽ gửi về toàn bộ thông tin của UID cấp 1.
+
+-> Hàm RC522_ToCard là 1 hàm gửi command và nhận dữ liệu từ command đấy -> dùng được cho cả REQA và ANTICOLL.
+
+C2 6B 2B 34
+
+1F 8B C8 AB
+ 

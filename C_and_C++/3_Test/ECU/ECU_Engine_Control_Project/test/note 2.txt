@@ -1,0 +1,26 @@
+RTE_Call_AcceleratorPedalSensor_Init();
+
+RTE_Call_SpeedCarSensor_Init();
+
+RTE_Call_LoadCapacitySensor_Init();
+
+RTE_Call_TorqueSensor_Init();
+
+RTE_Read_AcceleratorPedalSensor_AcceleratorValue(float *value);
+
+RTE_Read_SpeedCarSensor_SpeedValue(float *value);
+
+RTE_Read_LoadCapacitySensor_CapacityValue(float *value);
+
+RTE_Read_TorqueSensor_TorqueValue(float *value);
+
+
+RTE_Write_TorqueSensor_TorqueUpdate(const float value);
+
+
+- cảm biến bàn đạp -> xung pwm -> timer
+
+    Std_ReturnType IoHwAb_Call_AcceleratorPedalSensor_Init(ConfigType *value);
+
+Std_ReturnType IoHwAb_Read_AcceleratorPedalSensor_AcceleratorValue(float *value);
+
